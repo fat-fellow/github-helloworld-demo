@@ -5,7 +5,7 @@ Android HelloWorld Demo
 ## Tech Stack
 
 - **Architecture**: MVVM
-- **Networking**: Ktor
+- **Networking**: Ktor + Kotlin Serialization
 - **UI**: Jetpack Compose
 - **DI**: Dagger + Anvil
 - **State**: Kotlin Flow 
@@ -23,7 +23,7 @@ The project follows a **clean architecture** pattern, ensuring separation of con
 
 - **Anvil Components/Subcomponents**: Implemented as a showcase with two independent graphs and one subcomponent. The first approach avoids generating large Dagger graphs since no subcomponent is used. The second demonstrates the advantage of subcomponents in accessing dependencies from a parent graph without explicitly passing them.
 - **Scopes**: `AppScope`, `ReposScope`, `InfoScope` — for app-wide, Repos feature, and Info feature lifecycles, respectively.
-- **ViewModel Lifecycle-tied Scoping**: Feature component lifecycles are tied to the lifetime of corresponding ViewModels. Component holders manually control creation and release of scoped components.
+- **ViewModel Lifecycle-tied Scoping**: Feature component lifecycles are tied to the lifetime of corresponding ViewModels.
 - **Two Screens**: The app features two main screens:
     - **Repo** feature: Displays public repositories for a given user.
     - **Info** feature: Displays activity information for a selected repository.
@@ -32,9 +32,6 @@ The project follows a **clean architecture** pattern, ensuring separation of con
 
 - Modularization is inspired by Square’s large-scale architecture.
 - Feature APIs are split into `api` and `impl` modules.
-- `Composable` screens are exposed via public API interfaces.
-- DI is handled using Anvil scopes with `@MergeComponent`, `@MergeSubcomponent`, and `@ContributesBinding`.
-- Manual component lifecycle management allows flexible feature scoping without relying on Fragments or navigation backstack scoping.
 - The `Resultat` class extends Kotlin's `Result` to provide a lightweight and expressive way to manage UI state, including success, loading, and error states.
 - A shared interface and abstract base class are used for UseCases. This is a debatable design choice, but it helps ensure consistency and flexibility in logic invocation. It’s not required, but unifies usage across modules.
 - In the data layer, error wrapping via `Resultat` is intentionally avoided. Errors are passed directly to the domain layer to retain semantic clarity and reduce boilerplate.
