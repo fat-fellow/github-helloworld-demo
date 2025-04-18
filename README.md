@@ -6,7 +6,7 @@ Android HelloWorld Demo
 
 - **Architecture**: MVVM
 - **Networking**: Ktor + Kotlin Serialization
-- **UI**: Jetpack Compose
+- **UI**: Jetpack Compose / Jetpack Navigation
 - **DI**: Dagger + Anvil
 - **State**: Kotlin Flow 
 - **Testing**: Unit tests + Instrumentation tests
