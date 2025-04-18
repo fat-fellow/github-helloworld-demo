@@ -4,10 +4,9 @@ import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.BindsInstance
 import dagger.Subcomponent
 import mayudin.common.di.SingleIn
-import mayudin.info.api.di.InfoScope
-import mayudin.info.api.domain.model.GitHubRepository
-import mayudin.info.api.presentation.viewmodel.InfoViewModelFactory
-import mayudin.repos.api.presentation.viewmodel.ReposViewModelFactory
+import mayudin.feature.info.api.di.InfoScope
+import mayudin.feature.info.api.domain.model.GitHubRepo
+import mayudin.feature.info.api.presentation.viewmodel.InfoViewModelFactory
 
 @SingleIn(InfoScope::class)
 @MergeSubcomponent(InfoScope::class)
@@ -18,7 +17,7 @@ interface InfoComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance
-        fun repo(gitHubRepository: GitHubRepository) : Builder
+        fun repo(gitHubRepo: GitHubRepo) : Builder
         fun build(): InfoComponent
     }
 }

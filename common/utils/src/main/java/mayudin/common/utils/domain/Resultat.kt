@@ -1,6 +1,8 @@
 package mayudin.common.utils.domain
 
-import kotlin.Result
+import mayudin.common.utils.domain.Resultat.Companion.failure
+import mayudin.common.utils.domain.Resultat.Companion.loading
+import mayudin.common.utils.domain.Resultat.Companion.success
 
 /*
  * Copyright 2022 Nicolas Haan.

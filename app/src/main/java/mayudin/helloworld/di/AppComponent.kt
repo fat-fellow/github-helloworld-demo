@@ -6,8 +6,8 @@ import dagger.BindsInstance
 import dagger.Component
 import mayudin.common.di.AppScope
 import mayudin.common.di.SingleIn
+import mayudin.feature.info.impl.di.RepoDependencies
 import mayudin.helloworld.MainActivity
-import mayudin.info.impl.di.RepoDependencies
 
 @SingleIn(AppScope::class)
 @MergeComponent(AppScope::class)

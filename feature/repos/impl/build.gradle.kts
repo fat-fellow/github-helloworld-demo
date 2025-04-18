@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "mayudin.repos.impl"
+    namespace = "mayudin.feature.repos.impl"
     compileSdk = 35
 
     defaultConfig {

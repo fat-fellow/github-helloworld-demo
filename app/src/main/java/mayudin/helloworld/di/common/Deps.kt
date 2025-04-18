@@ -7,8 +7,8 @@ import dagger.multibindings.IntoMap
 import mayudin.common.di.AppScope
 import mayudin.common.di.ComponentDependencies
 import mayudin.common.di.ComponentDependenciesKey
+import mayudin.feature.info.impl.di.RepoDependencies
 import mayudin.helloworld.di.AppComponent
-import mayudin.info.impl.di.RepoDependencies
 
 @ContributesTo(AppScope::class)
 @Module
