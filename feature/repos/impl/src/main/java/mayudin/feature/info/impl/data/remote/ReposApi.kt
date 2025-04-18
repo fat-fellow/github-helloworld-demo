@@ -10,7 +10,7 @@ import mayudin.feature.repos.api.di.ReposScope
 import javax.inject.Inject
 
 interface ReposApi {
-    suspend fun getUserRepos(username: String): List<Repo>
+    suspend fun getUserRepos(user: String): List<Repo>
 }
 
 @SingleIn(ReposScope::class)

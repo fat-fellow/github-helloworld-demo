@@ -1,5 +1,6 @@
 package mayudin.feature.repos.api.presentation.screen
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,7 +65,7 @@ fun ReposScreen(
 }
 
 @Composable
-private fun ScreenLayout(
+fun ScreenLayout(
     uiState: Resultat<UiState>,
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
@@ -94,17 +97,22 @@ private fun ScreenLayout(
 }
 
 @Composable
-private fun LoadingLayout() {
+fun LoadingLayout() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = Color.Blue)
+        CircularProgressIndicator(
+            color = Color.Blue,
+            modifier = Modifier.semantics {
+                contentDescription = "LoadingIndicator"
+            }
+        )
     }
 }
 
 @Composable
-private fun SuccessLayout(
+fun SuccessLayout(
     repos: List<String>,
     owner: String,
     onNavigation: (String, String) -> Unit
@@ -130,7 +138,7 @@ private fun SuccessLayout(
 }
 
 @Composable
-private fun RepoItem(repo: String, onClick: () -> Unit) {
+fun RepoItem(repo: String, onClick: () -> Unit) {
     Text(
         text = repo,
         style = MaterialTheme.typography.bodyMedium,
@@ -142,7 +150,7 @@ private fun RepoItem(repo: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun ErrorLayout() {
+fun ErrorLayout() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = stringResource(R.string.error_message), color = Color.Red)
     }
