@@ -17,8 +17,6 @@ dependencies {
     api(project(":common:di"))
     api(project(":common:domain"))
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.converter.kotlinx.serialization)
-    api(libs.retrofit2)
     implementation(libs.okhttp3)
     api(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
