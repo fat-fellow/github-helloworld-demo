@@ -38,6 +38,7 @@ dependencies {
     api(libs.dagger)
     api(libs.anvil.annotations)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.compose.tooling.preview)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)

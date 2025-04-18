@@ -15,17 +15,46 @@ import mayudin.common.utils.domain.Resultat
 import mayudin.repos.api.presentation.model.UiState
 import mayudin.repos.api.presentation.viewmodel.ReposViewModel
 import mayudin.repos.api.presentation.viewmodel.ReposViewModelFactory
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import mayudin.repos.api.R
 
 @Composable
 fun ReposScreen(
     factory: ReposViewModelFactory,
     viewModel: ReposViewModel = viewModel(factory = factory),
-    onNavigation: () -> Unit = {},
-    onClose: () -> Unit
+    onNavigation: (String, String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    var searchText by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
 
+    ScreenLayout(
+        uiState = uiState,
+        searchText = searchText,
+        onSearchTextChanged = { text ->
+            searchText = text
+            viewModel.onSearchTextChanged(text.text)
+        },
+        onNavigation = onNavigation
+    )
+}
+
+@Composable
+private fun ScreenLayout(
+    uiState: Resultat<UiState>,
+    searchText: TextFieldValue,
+    onSearchTextChanged: (TextFieldValue) -> Unit,
+    onNavigation: (String, String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,52 +62,104 @@ fun ReposScreen(
     ) {
         SearchBar(
             searchText = searchText,
-            onSearchTextChanged = { text: TextFieldValue ->
-                searchText = text
-                viewModel.onSearchTextChanged(text.text)
-            }
+            onSearchTextChanged = onSearchTextChanged,
+            hint = stringResource(R.string.search_hint)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ReposContent(uiState = uiState)
+        when (uiState) {
+            is Resultat.Loading -> LoadingLayout()
+            is Resultat.Success -> SuccessLayout(
+                repos = uiState.value.repos,
+                owner = searchText.text,
+                onNavigation = onNavigation
+            )
+            is Resultat.Failure -> ErrorLayout()
+        }
+    }
+}
+
+@Composable
+private fun LoadingLayout() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = Color.Blue)
+    }
+}
+
+@Composable
+private fun SuccessLayout(
+    repos: List<String>,
+    owner: String,
+    onNavigation: (String, String) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+            .border(
+                width = Dp.Hairline,
+                color = Color.Gray,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(repos) { repo ->
+            RepoItem(repo = repo) {
+                onNavigation(owner, repo)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RepoItem(repo: String, onClick: () -> Unit) {
+    Text(
+        text = repo,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() }
+    )
+}
+
+@Composable
+private fun ErrorLayout() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = stringResource(R.string.error_message), color = Color.Red)
     }
 }
 
 @Composable
 fun SearchBar(
     searchText: TextFieldValue,
-    onSearchTextChanged: (TextFieldValue) -> Unit
+    onSearchTextChanged: (TextFieldValue) -> Unit,
+    hint: String = ""
 ) {
-    BasicTextField(
-        value = searchText,
-        onValueChange = onSearchTextChanged,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun ReposContent(uiState: Resultat<UiState>) {
-    when (uiState) {
-        is Resultat.Loading -> CircularProgressIndicator()
-        is Resultat.Success -> {
-            val repos = uiState.value.repos
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(repos) { repo ->
-                    Text(text = repo, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
+            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+            .border(width = Dp.Hairline, color = Color.Gray, shape = RoundedCornerShape(8.dp))
+    ) {
+        if (searchText.text.isEmpty()) {
+            Text(
+                text = hint,
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                modifier = Modifier.padding(8.dp)
+            )
         }
-
-        is Resultat.Failure -> {
-            Text(text = "Error: ${uiState.exception.message}")
-        }
+        BasicTextField(
+            value = searchText,
+            onValueChange = onSearchTextChanged,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
     }
 }
-

@@ -4,9 +4,10 @@ import mayudin.common.di.ComponentDependencies
 import mayudin.common.di.HasComponentDependencies
 import mayudin.helloworld.di.AppComponent
 import mayudin.helloworld.di.DaggerReposComponent
+import java.lang.ref.WeakReference
 
 class ComponentManager(
-    private val main: AppComponent,
+    val main: AppComponent,
     private val provider: HasComponentDependencies
 ) {
 
@@ -18,17 +19,17 @@ class ComponentManager(
 
     class Component<T>(private val builder: () -> T) {
 
-        private var instance: T? = null
+        private var instance: WeakReference<T>? = null
 
-        fun get() = instance ?: builder().also { instance = it }
+        fun get(): T = instance?.get() ?: builder().also { instance = WeakReference(it) }
 
-        fun new() = builder().also { instance = it }
+        fun new(): T = builder().also { instance = WeakReference(it) }
 
         fun release() {
             instance = null
         }
 
-        fun isInitialized() = instance != null
+        fun isInitialized() = instance != null && instance?.get() != null
     }
 
 

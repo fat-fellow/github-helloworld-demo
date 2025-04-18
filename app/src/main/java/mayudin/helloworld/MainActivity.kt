@@ -24,8 +24,13 @@ import mayudin.helloworld.di.AppComponent
 import mayudin.helloworld.di.DaggerAppComponent
 import mayudin.helloworld.di.common.ComponentManager
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
+import mayudin.info.api.domain.model.GitHubRepository
+import mayudin.info.api.presentation.viewmodel.InfoViewModelFactory
+import mayudin.info.api.ui.navigation.INFO_FLOW
+import mayudin.info.api.ui.navigation.INFO_ROUTE
+import mayudin.info.api.ui.navigation.infoRoute
+import mayudin.info.api.ui.navigation.openInfo
 import mayudin.repos.api.ui.navigation.REPOS_FLOW
-import mayudin.repos.api.ui.navigation.REPOS_ROUTE
 import mayudin.repos.api.ui.navigation.openRepos
 import javax.inject.Inject
 
@@ -76,15 +81,13 @@ fun AppNavHost(
     ) {
         openRepos(
             componentManager.repoComponent.get().viewModelFactory,
-            onClose = {  }
-        ) {
-            navController.popBackStack()
-            componentManager.repoComponent.release()
-            navController.navigate("second")
+        ) { owner, repository ->
+            navController.navigate(infoRoute(owner, repository))
         }
-        composable("second") {
-            SecondScreen(onNavigateBack = { navController.popBackStack() })
-        }
+        openInfo(init = { owner, repo ->
+            componentManager.main.infoComponentBuilder()
+                .repo(GitHubRepository(owner, repo)).build().viewModelFactory
+        })
     }
 }
 

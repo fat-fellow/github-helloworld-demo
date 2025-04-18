@@ -1,0 +1,5 @@
+<resources>
+    <!-- ...existing strings... -->
+    <string name="error_message">Something went wrong</string>
+    <string name="search_hint">Search by user... (for example: \'fat-fellow\')</string>
+</resources>

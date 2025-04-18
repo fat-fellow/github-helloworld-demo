@@ -15,8 +15,8 @@ kotlin {
 
 dependencies {
     api(project(":common:di"))
+    api(project(":common:domain"))
     implementation(libs.kotlinx.serialization.json)
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation(libs.converter.kotlinx.serialization)
     api(libs.retrofit2)
     implementation(libs.okhttp3)

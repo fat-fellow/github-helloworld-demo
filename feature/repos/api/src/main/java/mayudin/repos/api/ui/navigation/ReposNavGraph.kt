@@ -11,15 +11,14 @@ const val REPOS_ROUTE = "repos/list"
 
 fun NavGraphBuilder.openRepos(
     factory: ReposViewModelFactory,
-    onClose: () -> Unit,
-    onNavigation: () -> Unit
+    onNavigation: (String, String) -> Unit
 ) {
     navigation(
         startDestination = REPOS_ROUTE,
         route = REPOS_FLOW
     ) {
         composable(route = REPOS_ROUTE) {
-            ReposScreen(factory, onNavigation = onNavigation, onClose = onClose)
+            ReposScreen(factory, onNavigation = onNavigation)
         }
     }
 }
