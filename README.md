@@ -45,3 +45,26 @@ The project follows a **clean architecture** pattern, ensuring separation of con
 ## Testing
 
 The project includes unit and instrumentation tests for the **Repos** feature only. The purpose of this sample is not to cover all edge cases but to demonstrate modular structure and basic testability.
+
+## Project Layout
+
+```
+├── app/                         # Application entry point
+│   ├── MainActivity.kt         # Navigation host and DI setup
+│   └── di/                     # AppComponent definition
+│
+├── common/                     # Shared core modules
+│   ├── di/                     # Shared di components
+│   ├── domain/                 # Shared domain models (errors)
+│   ├── network/                # Ktor client and API helpers
+│   └── utils/                  # Resultat and UseCase (probably utils is not good enough name)
+│
+├── feature/                    # Feature modules
+│   ├── info/                   # Info screen
+│   │   ├── api/                # Interface + ViewModel + DI entry (presentation layer + usecase interfaces)
+│   │   └── impl/               # Feature implementation (usecase impls, data layer)
+│   └── repos/                  # Repos screen
+│       ├── api/
+│       └── impl/
+│
+└── build.gradle.kts            # Root Gradle file
