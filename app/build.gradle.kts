@@ -46,6 +46,7 @@ android {
 }
 
 allprojects {
+    // worth moving to convention plugin
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 }
 
