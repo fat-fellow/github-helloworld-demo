@@ -5,13 +5,13 @@ import mayudin.common.domain.DomainError
 import mayudin.feature.info.impl.data.model.Repo
 import mayudin.feature.info.impl.data.remote.ReposApi
 import mayudin.feature.info.impl.domain.repository.ReposRepository
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ReposRepositoryImplTest {
 
@@ -53,7 +53,7 @@ class ReposRepositoryImplTest {
             coEvery { api.getUserRepos(user) } throws exception
 
             // Act
-            val thrown = assertThrows(DomainError::class.java) {
+            val thrown = assertFailsWith<DomainError> {
                 runBlocking { repository.fetchRepos(user) }
             }
 

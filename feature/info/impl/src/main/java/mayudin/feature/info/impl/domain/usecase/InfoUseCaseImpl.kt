@@ -1,10 +1,10 @@
 package mayudin.feature.info.impl.domain.usecase
 
 import com.squareup.anvil.annotations.ContributesBinding
+import kotlinx.coroutines.withContext
 import mayudin.common.di.SingleIn
 import mayudin.common.di.dispatchers.CoroutinesDispatchers
 import mayudin.common.di.dispatchers.Dispatcher
-import mayudin.common.utils.domain.ResultUseCaseImpl
 import mayudin.feature.info.api.di.InfoScope
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.domain.usecase.InfoUseCase
@@ -18,11 +18,13 @@ import kotlin.coroutines.CoroutineContext
     boundType = InfoUseCase::class
 )
 class InfoUseCaseImpl @Inject constructor(
-    @Dispatcher(CoroutinesDispatchers.IO) context: CoroutineContext,
+    @Dispatcher(CoroutinesDispatchers.IO) private val context: CoroutineContext,
     private val reposRepository: InfoRepository
-) : ResultUseCaseImpl<GitHubRepo, List<String>>(context), InfoUseCase {
+) : InfoUseCase {
 
-    override suspend fun doWork(params: GitHubRepo): List<String> {
-        return reposRepository.getReposActivity(params)
+    override suspend fun invoke(params: GitHubRepo): List<String> {
+        return withContext(context) {
+            reposRepository.getReposActivity(params)
+        }
     }
 }

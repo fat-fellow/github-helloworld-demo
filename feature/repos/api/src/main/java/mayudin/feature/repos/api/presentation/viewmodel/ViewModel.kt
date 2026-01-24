@@ -5,15 +5,15 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import mayudin.common.utils.domain.Resultat
-import mayudin.common.utils.domain.map
 import mayudin.feature.repos.api.domain.usecase.ReposUseCase
 import mayudin.feature.repos.api.presentation.model.UiState
 
@@ -39,8 +39,13 @@ class ReposViewModel(
         return if (query.isBlank()) {
             flowOf(Resultat.success(UiState(emptyList())))
         } else {
-            reposUseCase.stream(query)
-                .map { it.map { UiState(it) } }
+            flow {
+                emit(Resultat.loading())
+                val result = reposUseCase(query)
+                emit(Resultat.success(UiState(result)))
+            }.catch { throwable ->
+                emit(Resultat.failure(throwable))
+            }
         }
     }
 
