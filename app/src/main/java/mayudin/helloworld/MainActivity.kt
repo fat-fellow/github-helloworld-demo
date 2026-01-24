@@ -13,24 +13,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.presentation.navigation.infoRoute
 import mayudin.feature.info.api.presentation.navigation.openInfo
 import mayudin.feature.repos.api.presentation.navigation.REPOS_FLOW
 import mayudin.feature.repos.api.presentation.navigation.openRepos
-import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModelFactory
-import mayudin.feature.info.api.presentation.viewmodel.InfoViewModelFactory
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var reposViewModelFactory: ReposViewModelFactory
-
-    @Inject
-    lateinit var infoViewModelFactoryProvider: InfoViewModelFactory.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +30,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavHost(
-                        reposViewModelFactory = reposViewModelFactory,
-                        infoViewModelFactoryProvider = infoViewModelFactoryProvider,
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
                     )
@@ -53,8 +41,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavHost(
-    reposViewModelFactory: ReposViewModelFactory,
-    infoViewModelFactoryProvider: InfoViewModelFactory.Factory,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -63,14 +49,10 @@ fun AppNavHost(
         startDestination = REPOS_FLOW,
         modifier = modifier,
     ) {
-        openRepos(
-            reposViewModelFactory,
-        ) { owner, repository ->
+        openRepos { owner, repository ->
             navController.navigate(infoRoute(owner, repository))
         }
-        openInfo(init = { owner, repo ->
-            infoViewModelFactoryProvider.create(GitHubRepo(owner, repo))
-        })
+        openInfo()
     }
 }
 

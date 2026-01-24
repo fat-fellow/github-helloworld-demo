@@ -2,6 +2,9 @@ package mayudin.feature.repos.api.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +19,11 @@ import kotlinx.coroutines.flow.onEach
 import mayudin.common.utils.domain.Resultat
 import mayudin.feature.repos.api.domain.usecase.ReposUseCase
 import mayudin.feature.repos.api.presentation.model.UiState
+import javax.inject.Inject
 
-class ReposViewModel(
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class ReposViewModel @Inject constructor(
     private val reposUseCase: ReposUseCase,
 ) : ViewModel() {
 

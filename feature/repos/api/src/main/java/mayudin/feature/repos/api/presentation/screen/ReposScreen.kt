@@ -1,6 +1,5 @@
 package mayudin.feature.repos.api.presentation.screen
 
-import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,18 +33,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import mayudin.common.utils.domain.Resultat
 import mayudin.feature.repos.api.R
 import mayudin.feature.repos.api.presentation.model.UiState
 import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModel
-import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModelFactory
 
 @Composable
 fun ReposScreen(
-    factory: ReposViewModelFactory,
-    viewModel: ReposViewModel = viewModel(factory = factory),
+    viewModel: ReposViewModel = hiltViewModel(),
     onNavigation: (String, String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

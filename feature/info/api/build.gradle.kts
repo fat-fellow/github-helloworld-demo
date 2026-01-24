@@ -31,6 +31,7 @@ dependencies {
     api(project(":common:utils"))
     api(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.tooling.preview)
     implementation(libs.androidx.navigation.compose)

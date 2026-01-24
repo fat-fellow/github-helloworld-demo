@@ -19,18 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import mayudin.common.utils.domain.Resultat
 import mayudin.feature.info.api.presentation.model.UiState
 import mayudin.feature.info.api.presentation.viewmodel.InfoViewModel
-import mayudin.feature.info.api.presentation.viewmodel.InfoViewModelFactory
 import mayudin.feature.info.api.R
 
 @Composable
 fun InfoScreen(
-    factory: InfoViewModelFactory,
-    viewModel: InfoViewModel = viewModel(factory = factory),
+    viewModel: InfoViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Layout(uiState)
