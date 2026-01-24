@@ -1,20 +1,32 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("java-library")
-    alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_21
+
+android {
+    namespace = "mayudin.common.di"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 31
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_21
+        }
     }
 }
 
 dependencies {
-    api(libs.anvil.annotations)
-    api(libs.dagger)
+    api(libs.hilt.android)
 }

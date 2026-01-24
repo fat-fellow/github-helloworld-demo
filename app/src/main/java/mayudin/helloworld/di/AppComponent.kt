@@ -1,16 +1,16 @@
 package mayudin.helloworld.di
 
 import android.content.Context
-import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
 import dagger.Component
-import mayudin.common.di.AppScope
-import mayudin.common.di.SingleIn
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import mayudin.feature.info.impl.di.RepoDependencies
 import mayudin.helloworld.MainActivity
 
-@SingleIn(AppScope::class)
-@MergeComponent(AppScope::class)
+@InstallIn(SingletonComponent::class)
+@EntryPoint
 interface AppComponent : RepoDependencies {
 
     fun infoComponentBuilder(): InfoComponent.Builder

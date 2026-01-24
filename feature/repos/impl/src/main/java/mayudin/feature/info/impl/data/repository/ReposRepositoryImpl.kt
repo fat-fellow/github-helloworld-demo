@@ -1,13 +1,16 @@
 package mayudin.feature.info.impl.data.repository
 
-import com.squareup.anvil.annotations.ContributesBinding
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import mayudin.common.network.Mappers
 import mayudin.feature.info.impl.data.remote.ReposApi
 import mayudin.feature.info.impl.domain.repository.ReposRepository
-import mayudin.feature.repos.api.di.ReposScope
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ContributesBinding(ReposScope::class)
+@Singleton
 class ReposRepositoryImpl @Inject constructor(
     private val api: ReposApi
 ) : ReposRepository {
@@ -18,4 +21,12 @@ class ReposRepositoryImpl @Inject constructor(
             throw Mappers.mapToDomain(exception)
         }
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface ReposRepositoryModule {
+    @Binds
+    @Singleton
+    fun bindReposRepository(impl: ReposRepositoryImpl): ReposRepository
 }

@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -29,8 +29,8 @@ android {
 
 dependencies {
     api(project(":common:utils"))
-    api(libs.dagger)
-    api(libs.anvil.annotations)
+    api(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.tooling.preview)
     implementation(libs.androidx.navigation.compose)

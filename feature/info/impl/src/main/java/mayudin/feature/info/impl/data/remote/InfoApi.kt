@@ -1,20 +1,21 @@
 package mayudin.feature.info.impl.data.remote
 
-import com.squareup.anvil.annotations.ContributesBinding
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import mayudin.common.di.SingleIn
 import mayudin.common.network.KtorClientProvider
-import mayudin.feature.info.api.di.InfoScope
 import mayudin.feature.info.impl.data.model.Activity
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface InfoApi {
     suspend fun getReposActivity(owner: String, repo: String): List<Activity>
 }
 
-@SingleIn(InfoScope::class)
-@ContributesBinding(InfoScope::class)
+@Singleton
 class InfoApiImpl @Inject constructor(
     private val ktor: KtorClientProvider
 ) : InfoApi {
@@ -24,3 +25,12 @@ class InfoApiImpl @Inject constructor(
             .body<List<Activity>>()
     }
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface InfoApiModule {
+    @Binds
+    @Singleton
+    fun bindInfoApi(impl: InfoApiImpl): InfoApi
+}
+

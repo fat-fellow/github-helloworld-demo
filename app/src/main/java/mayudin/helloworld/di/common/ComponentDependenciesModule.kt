@@ -1,16 +1,16 @@
 package mayudin.helloworld.di.common
 
-import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoMap
-import mayudin.common.di.AppScope
 import mayudin.common.di.ComponentDependencies
 import mayudin.common.di.ComponentDependenciesKey
 import mayudin.feature.info.impl.di.RepoDependencies
 import mayudin.helloworld.di.AppComponent
 
-@ContributesTo(AppScope::class)
+@InstallIn(SingletonComponent::class)
 @Module
 interface ComponentDependenciesModule {
 

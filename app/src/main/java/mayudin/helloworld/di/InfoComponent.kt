@@ -1,15 +1,15 @@
 package mayudin.helloworld.di
 
-import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.BindsInstance
+import dagger.Module
 import dagger.Subcomponent
-import mayudin.common.di.SingleIn
+import dagger.hilt.InstallIn
 import mayudin.feature.info.api.di.InfoScope
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.presentation.viewmodel.InfoViewModelFactory
 
-@SingleIn(InfoScope::class)
-@MergeSubcomponent(InfoScope::class)
+@InstallIn(InfoScope::class)
+@Module
 interface InfoComponent {
 
     val viewModelFactory: InfoViewModelFactory

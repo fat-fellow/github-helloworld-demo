@@ -12,46 +12,36 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import javax.inject.Inject
-import mayudin.common.di.ComponentDependenciesProvider
-import mayudin.common.di.HasComponentDependencies
+import dagger.hilt.android.AndroidEntryPoint
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.presentation.navigation.infoRoute
 import mayudin.feature.info.api.presentation.navigation.openInfo
 import mayudin.feature.repos.api.presentation.navigation.REPOS_FLOW
 import mayudin.feature.repos.api.presentation.navigation.openRepos
-import mayudin.helloworld.di.AppComponent
-import mayudin.helloworld.di.DaggerAppComponent
-import mayudin.helloworld.di.common.ComponentManager
+import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModelFactory
+import mayudin.feature.info.api.presentation.viewmodel.InfoViewModelFactory
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
+import javax.inject.Inject
 
-class MainActivity :
-    ComponentActivity(),
-    HasComponentDependencies {
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
 
     @Inject
-    override lateinit var dependencies: ComponentDependenciesProvider
+    lateinit var reposViewModelFactory: ReposViewModelFactory
 
-    val appComponent: AppComponent by lazy {
-        DaggerAppComponent
-            .factory()
-            .create(this)
-    }
-
-    val componentManager by lazy {
-        ComponentManager(appComponent, this)
-    }
+    @Inject
+    lateinit var infoViewModelFactoryProvider: InfoViewModelFactory.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponent.inject(this)
         enableEdgeToEdge()
         setContent {
             GithubHelloWorldDemoTheme {
                 val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavHost(
-                        componentManager = componentManager,
+                        reposViewModelFactory = reposViewModelFactory,
+                        infoViewModelFactoryProvider = infoViewModelFactoryProvider,
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
                     )
@@ -63,7 +53,8 @@ class MainActivity :
 
 @Composable
 fun AppNavHost(
-    componentManager: ComponentManager,
+    reposViewModelFactory: ReposViewModelFactory,
+    infoViewModelFactoryProvider: InfoViewModelFactory.Factory,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -73,13 +64,13 @@ fun AppNavHost(
         modifier = modifier,
     ) {
         openRepos(
-            componentManager.repoComponent.get().viewModelFactory,
+            reposViewModelFactory,
         ) { owner, repository ->
             navController.navigate(infoRoute(owner, repository))
         }
         openInfo(init = { owner, repo ->
-            componentManager.main.infoComponentBuilder()
-                .repo(GitHubRepo(owner, repo)).build().viewModelFactory
+            infoViewModelFactoryProvider.create(GitHubRepo(owner, repo))
         })
     }
 }
+

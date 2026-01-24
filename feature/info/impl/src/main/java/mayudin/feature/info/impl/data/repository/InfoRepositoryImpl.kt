@@ -1,14 +1,17 @@
 package mayudin.feature.info.impl.data.repository
 
-import com.squareup.anvil.annotations.ContributesBinding
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import mayudin.common.network.Mappers
-import mayudin.feature.info.api.di.InfoScope
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.impl.data.remote.InfoApi
 import mayudin.feature.info.impl.domain.repository.InfoRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ContributesBinding(InfoScope::class)
+@Singleton
 class InfoRepositoryImpl @Inject constructor(
     private val api: InfoApi
 ) : InfoRepository {
@@ -21,3 +24,12 @@ class InfoRepositoryImpl @Inject constructor(
         }
     }
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface InfoRepositoryModule {
+    @Binds
+    @Singleton
+    fun bindInfoRepository(impl: InfoRepositoryImpl): InfoRepository
+}
+

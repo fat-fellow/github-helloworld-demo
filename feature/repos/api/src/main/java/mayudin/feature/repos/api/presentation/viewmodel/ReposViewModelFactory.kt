@@ -2,12 +2,11 @@ package mayudin.feature.repos.api.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.squareup.anvil.annotations.ContributesBinding
-import mayudin.feature.repos.api.di.ReposScope
 import mayudin.feature.repos.api.domain.usecase.ReposUseCase
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ContributesBinding(ReposScope::class)
+@Singleton
 class ReposViewModelFactory @Inject constructor(
     private val reposUseCase: ReposUseCase,
 ) : ViewModelProvider.Factory {
@@ -19,3 +18,4 @@ class ReposViewModelFactory @Inject constructor(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+

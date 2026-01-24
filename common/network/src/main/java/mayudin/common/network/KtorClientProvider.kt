@@ -1,16 +1,17 @@
 package mayudin.common.network
 
-import com.squareup.anvil.annotations.ContributesBinding
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import mayudin.common.di.AppScope
-import mayudin.common.di.SingleIn
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
+@Singleton
 class KtorClientProviderImpl @Inject constructor() : KtorClientProvider {
     override val client = HttpClient {
         install(ContentNegotiation) {
@@ -22,3 +23,12 @@ class KtorClientProviderImpl @Inject constructor() : KtorClientProvider {
 interface KtorClientProvider {
     val client: HttpClient
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface KtorClientProviderModule {
+    @Binds
+    @Singleton
+    fun bindKtorClientProvider(impl: KtorClientProviderImpl): KtorClientProvider
+}
+

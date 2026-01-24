@@ -2,16 +2,15 @@ package mayudin.feature.info.api.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.squareup.anvil.annotations.ContributesBinding
-import mayudin.feature.info.api.di.InfoScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.domain.usecase.InfoUseCase
-import javax.inject.Inject
 
-@ContributesBinding(InfoScope::class)
-class InfoViewModelFactory @Inject constructor(
+class InfoViewModelFactory @AssistedInject constructor(
     private val infoUseCase: InfoUseCase,
-    private val repository: GitHubRepo,
+    @Assisted private val repository: GitHubRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(InfoViewModel::class.java)) {
@@ -20,4 +19,10 @@ class InfoViewModelFactory @Inject constructor(
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(repository: GitHubRepo): InfoViewModelFactory
+    }
 }
+

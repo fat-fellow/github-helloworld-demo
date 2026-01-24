@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.anvil)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -28,8 +28,8 @@ android {
 }
 
 dependencies {
-
-    api(libs.anvil.annotations)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(project(":feature:repos:api"))
     implementation(project(":common:network"))
     implementation(project(":common:di"))
@@ -43,6 +43,3 @@ dependencies {
     testImplementation(libs.mockk)
 }
 
-anvil {
-    generateDaggerFactories.set(true)
-}
