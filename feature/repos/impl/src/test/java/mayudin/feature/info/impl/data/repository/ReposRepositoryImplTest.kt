@@ -9,8 +9,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
-import org.mockito.kotlin.mock
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 
 class ReposRepositoryImplTest {
 
@@ -19,7 +20,7 @@ class ReposRepositoryImplTest {
 
     @Before
     fun setUp() {
-        api = mock()
+        api = mockk()
         repository = ReposRepositoryImpl(api)
     }
 
@@ -32,14 +33,14 @@ class ReposRepositoryImplTest {
                 Repo(id = 1, name = "Repo1"),
                 Repo(id = 2, name = "Repo2")
             )
-            `when`(api.getUserRepos(user)).thenReturn(mockResponse)
+            coEvery { api.getUserRepos(user) } returns mockResponse
 
             // Act
             val result = repository.fetchRepos(user)
 
             // Assert
             assertEquals(listOf("Repo1", "Repo2"), result)
-            verify(api).getUserRepos(user)
+            coVerify { api.getUserRepos(user) }
         }
     }
 
@@ -49,7 +50,7 @@ class ReposRepositoryImplTest {
             // Arrange
             val user = "testUser"
             val exception = RuntimeException("API error")
-            `when`(api.getUserRepos(user)).thenThrow(exception)
+            coEvery { api.getUserRepos(user) } throws exception
 
             // Act
             val thrown = assertThrows(DomainError::class.java) {
@@ -58,7 +59,7 @@ class ReposRepositoryImplTest {
 
             // Assert
             assertEquals("java.lang.RuntimeException: API error", thrown.message)
-            verify(api).getUserRepos(user)
+            coVerify { api.getUserRepos(user) }
         }
     }
 }

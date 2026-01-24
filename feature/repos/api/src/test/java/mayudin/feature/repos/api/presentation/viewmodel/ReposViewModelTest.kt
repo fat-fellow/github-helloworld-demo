@@ -14,8 +14,8 @@ import mayudin.feature.repos.api.presentation.model.UiState
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
+import io.mockk.every
+import io.mockk.mockk
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReposViewModelTest {
@@ -27,7 +27,7 @@ class ReposViewModelTest {
 
     @Before
     fun setUp() {
-        reposUseCase = mock()
+        reposUseCase = mockk()
         viewModel = ReposViewModel(reposUseCase)
         Dispatchers.setMain(testDispatcher)
     }
@@ -45,7 +45,7 @@ class ReposViewModelTest {
     fun `uiState - emits results from use case - when query is not blank`() = testScope.runTest {
         val query = "test"
         val mockResult = Resultat.success(listOf("Repo1", "Repo2"))
-        whenever(reposUseCase.stream(query)).thenReturn(flowOf(mockResult))
+        every { reposUseCase.stream(query) } returns flowOf(mockResult)
 
         viewModel.onSearchTextChanged(query)
 
@@ -60,7 +60,7 @@ class ReposViewModelTest {
         val query = "test"
         val result = Resultat.loading<List<String>>()
         val mockResult = flowOf(result)
-        whenever(reposUseCase.stream(query)).thenReturn(mockResult)
+        every { reposUseCase.stream(query) } returns mockResult
 
         viewModel.onSearchTextChanged(query)
 
@@ -74,7 +74,7 @@ class ReposViewModelTest {
     fun `uiState - emits error state - when use case returns error`() = testScope.runTest {
         val query = "test"
         val mockError = Resultat.failure<List<String>>(Throwable("An error occurred"))
-        whenever(reposUseCase.stream(query)).thenReturn(flowOf(mockError))
+        every { reposUseCase.stream(query) } returns flowOf(mockError)
 
         viewModel.onSearchTextChanged(query)
 
