@@ -1,15 +1,12 @@
 package mayudin.helloworld.di.common
 
+import java.lang.ref.WeakReference
 import mayudin.common.di.ComponentDependencies
 import mayudin.common.di.HasComponentDependencies
 import mayudin.helloworld.di.AppComponent
 import mayudin.helloworld.di.DaggerReposComponent
-import java.lang.ref.WeakReference
 
-class ComponentManager(
-    val main: AppComponent,
-    private val provider: HasComponentDependencies
-) {
+class ComponentManager(val main: AppComponent, private val provider: HasComponentDependencies) {
 
     val repoComponent = Component {
         DaggerReposComponent.builder()
@@ -31,7 +28,6 @@ class ComponentManager(
 
         fun isInitialized() = instance != null && instance?.get() != null
     }
-
 
     private inline fun <reified T : ComponentDependencies> findComponentDependencies(): T {
         return provider.dependencies[T::class.java] as T

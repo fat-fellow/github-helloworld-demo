@@ -17,9 +17,7 @@ interface AppComponent : RepoDependencies {
 
     @Component.Factory
     interface Factory {
-        fun create(
-            @BindsInstance context: Context,
-        ): AppComponent
+        fun create(@BindsInstance context: Context): AppComponent
     }
 
     fun inject(mainActivity: MainActivity)

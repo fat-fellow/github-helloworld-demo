@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import javax.inject.Inject
 import mayudin.common.di.ComponentDependenciesProvider
 import mayudin.common.di.HasComponentDependencies
 import mayudin.feature.info.api.domain.model.GitHubRepo
@@ -23,9 +24,10 @@ import mayudin.helloworld.di.AppComponent
 import mayudin.helloworld.di.DaggerAppComponent
 import mayudin.helloworld.di.common.ComponentManager
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
-import javax.inject.Inject
 
-class MainActivity : ComponentActivity(), HasComponentDependencies {
+class MainActivity :
+    ComponentActivity(),
+    HasComponentDependencies {
 
     @Inject
     override lateinit var dependencies: ComponentDependenciesProvider
@@ -51,7 +53,7 @@ class MainActivity : ComponentActivity(), HasComponentDependencies {
                     AppNavHost(
                         componentManager = componentManager,
                         navController = navController,
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }
@@ -63,12 +65,12 @@ class MainActivity : ComponentActivity(), HasComponentDependencies {
 fun AppNavHost(
     componentManager: ComponentManager,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
         startDestination = REPOS_FLOW,
-        modifier = modifier
+        modifier = modifier,
     ) {
         openRepos(
             componentManager.repoComponent.get().viewModelFactory,

@@ -17,7 +17,7 @@ interface InfoComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance
-        fun repo(gitHubRepo: GitHubRepo) : Builder
+        fun repo(gitHubRepo: GitHubRepo): Builder
         fun build(): InfoComponent
     }
 }
