@@ -51,10 +51,8 @@ allprojects {
 
 dependencies {
     implementation(project(":common:network"))
-    implementation(project(":feature:info:api"))
-    implementation(project(":feature:info:impl"))
-    implementation(project(":feature:repos:api"))
-    implementation(project(":feature:repos:impl"))
+    implementation(project(":feature:info"))
+    implementation(project(":feature:repos"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

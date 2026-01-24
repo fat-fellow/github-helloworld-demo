@@ -21,10 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Github HelloWorld Demo"
 include(":app")
-include(":feature:repos:api")
-include(":feature:repos:impl")
-include(":feature:info:api")
-include(":feature:info:impl")
+include(":feature:repos")
+include(":feature:info")
 include(":common:utils")
 include(":common:network")
 include(":common:domain")
