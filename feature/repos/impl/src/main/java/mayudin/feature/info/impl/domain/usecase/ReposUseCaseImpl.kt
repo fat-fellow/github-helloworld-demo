@@ -3,34 +3,31 @@ package mayudin.feature.info.impl.domain.usecase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mayudin.common.di.dispatchers.CoroutinesDispatchers
-import mayudin.common.di.dispatchers.Dispatcher
 import mayudin.feature.info.impl.domain.repository.ReposRepository
 import mayudin.feature.repos.api.domain.usecase.ReposUseCase
 import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
-@Singleton
 class ReposUseCaseImpl @Inject constructor(
-    @Dispatcher(CoroutinesDispatchers.IO) private val context: CoroutineContext,
-    private val reposRepository: ReposRepository
+    private val reposRepository: ReposRepository,
 ) : ReposUseCase {
 
     override suspend fun invoke(params: String): List<String> {
-        return withContext(context) {
+        return withContext(Dispatchers.IO) {
             reposRepository.fetchRepos(params)
         }
     }
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface ReposUseCaseModule {
+
     @Binds
-    @Singleton
+    @ViewModelScoped
     fun bindReposUseCase(impl: ReposUseCaseImpl): ReposUseCase
 }
 

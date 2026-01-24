@@ -27,7 +27,6 @@ android {
 }
 
 dependencies {
-    api(project(":common:di"))
     api(project(":common:domain"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp3)

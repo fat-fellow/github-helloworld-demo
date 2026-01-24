@@ -50,7 +50,6 @@ allprojects {
 }
 
 dependencies {
-    implementation(project(":common:di"))
     implementation(project(":common:network"))
     implementation(project(":feature:info:api"))
     implementation(project(":feature:info:impl"))

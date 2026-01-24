@@ -1,4 +1,4 @@
-package mayudin.feature.info.impl.domain.repository
+package mayudin.feature.info.api.domain.repository
 
 import mayudin.feature.info.api.domain.model.GitHubRepo
 

@@ -32,7 +32,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(project(":feature:repos:api"))
     implementation(project(":common:network"))
-    implementation(project(":common:di"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -3,35 +3,33 @@ package mayudin.feature.info.impl.domain.usecase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mayudin.common.di.dispatchers.CoroutinesDispatchers
-import mayudin.common.di.dispatchers.Dispatcher
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.domain.usecase.InfoUseCase
-import mayudin.feature.info.impl.domain.repository.InfoRepository
+import mayudin.feature.info.api.domain.repository.InfoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
 @Singleton
 class InfoUseCaseImpl @Inject constructor(
-    @Dispatcher(CoroutinesDispatchers.IO) private val context: CoroutineContext,
-    private val reposRepository: InfoRepository
+    private val reposRepository: InfoRepository,
 ) : InfoUseCase {
 
     override suspend fun invoke(params: GitHubRepo): List<String> {
-        return withContext(context) {
+        return withContext(Dispatchers.IO) {
             reposRepository.getReposActivity(params)
         }
     }
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface InfoUseCaseModule {
     @Binds
-    @Singleton
+    @ViewModelScoped
     fun bindInfoUseCase(impl: InfoUseCaseImpl): InfoUseCase
 }
 

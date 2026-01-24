@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import mayudin.common.network.Mappers
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.impl.data.remote.InfoApi
-import mayudin.feature.info.impl.domain.repository.InfoRepository
+import mayudin.feature.info.api.domain.repository.InfoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
