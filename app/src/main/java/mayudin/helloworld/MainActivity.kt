@@ -8,15 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import mayudin.feature.info.api.presentation.navigation.infoRoute
+import mayudin.feature.info.api.presentation.navigation.InfoRoute
 import mayudin.feature.info.api.presentation.navigation.openInfo
-import mayudin.feature.repos.api.presentation.navigation.REPOS_FLOW
+import mayudin.feature.repos.api.presentation.navigation.ReposRoute
 import mayudin.feature.repos.api.presentation.navigation.openRepos
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
 
@@ -47,11 +46,11 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = REPOS_FLOW,
+        startDestination = ReposRoute,
         modifier = modifier,
     ) {
-        openRepos { owner, repository ->
-            navController.navigate(infoRoute(owner, repository))
+        openRepos { owner, repo ->
+            navController.navigate(InfoRoute(owner, repo))
         }
         openInfo()
     }

@@ -28,7 +28,11 @@ import mayudin.feature.info.api.presentation.viewmodel.InfoViewModel
 
 @Composable
 fun InfoScreen(
-    viewModel: InfoViewModel = hiltViewModel(),
+    owner: String,
+    repo: String,
+    viewModel: InfoViewModel = hiltViewModel<InfoViewModel, InfoViewModel.Factory> { factory ->
+        factory.create(owner, repo)
+    },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Layout(uiState)
