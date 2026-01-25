@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import mayudin.common.utils.domain.Resultat
 import mayudin.feature.repos.R
 import mayudin.feature.repos.api.presentation.model.UiState
 import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModel
@@ -63,7 +62,7 @@ fun ReposScreen(
 
 @Composable
 fun ScreenLayout(
-    uiState: Resultat<UiState>,
+    uiState: UiState,
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
     onNavigation: (String, String) -> Unit
@@ -82,13 +81,14 @@ fun ScreenLayout(
         Spacer(modifier = Modifier.height(16.dp))
 
         when (uiState) {
-            is Resultat.Loading -> LoadingLayout()
-            is Resultat.Success -> SuccessLayout(
-                repos = uiState.value.repos,
-                owner = searchText.text,
+            is UiState.Idle -> IdleLayout()
+            is UiState.Loading -> LoadingLayout()
+            is UiState.Success -> SuccessLayout(
+                repos = uiState.repos,
+                owner = uiState.owner,
                 onNavigation = onNavigation
             )
-            is Resultat.Failure -> ErrorLayout()
+            is UiState.Error -> ErrorLayout(uiState.message)
         }
     }
 }
@@ -109,26 +109,53 @@ fun LoadingLayout() {
 }
 
 @Composable
+fun IdleLayout() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.search_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
 fun SuccessLayout(
     repos: List<String>,
     owner: String,
     onNavigation: (String, String) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-            .border(
-                width = Dp.Hairline,
-                color = Color.Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(repos) { repo ->
-            RepoItem(repo = repo) {
-                onNavigation(owner, repo)
+    if (repos.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No repositories found",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                .border(
+                    width = Dp.Hairline,
+                    color = Color.Gray,
+                    shape = RoundedCornerShape(8.dp)
+                ),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(repos) { repo ->
+                RepoItem(repo = repo) {
+                    onNavigation(owner, repo)
+                }
             }
         }
     }
@@ -147,9 +174,9 @@ fun RepoItem(repo: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ErrorLayout() {
+fun ErrorLayout(message: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = stringResource(R.string.error_message), color = Color.Red)
+        Text(text = message, color = Color.Red)
     }
 }
 

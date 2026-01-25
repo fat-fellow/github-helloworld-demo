@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import mayudin.common.utils.domain.Resultat
 import mayudin.feature.info.R
 import mayudin.feature.info.api.presentation.model.UiState
 import mayudin.feature.info.api.presentation.viewmodel.InfoViewModel
@@ -39,16 +38,16 @@ fun InfoScreen(
 }
 
 @Composable
-private fun Layout(uiState: Resultat<UiState>) {
+private fun Layout(uiState: UiState) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
     ) {
         when (uiState) {
-            is Resultat.Loading -> LoadingLayout()
-            is Resultat.Success -> SuccessLayout(uiState.value)
-            is Resultat.Failure -> ErrorLayout(Modifier.align(Alignment.Center))
+            is UiState.Loading -> LoadingLayout()
+            is UiState.Success -> SuccessLayout(uiState)
+            is UiState.Error -> ErrorLayout(uiState.message, Modifier.align(Alignment.Center))
         }
     }
 }
@@ -61,16 +60,16 @@ private fun LoadingLayout() {
 }
 
 @Composable
-private fun ErrorLayout(modifier: Modifier = Modifier) {
+private fun ErrorLayout(message: String, modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(R.string.error_message),
+        text = message,
         color = Color.Red,
         modifier = modifier,
     )
 }
 
 @Composable
-private fun SuccessLayout(uiState: UiState) {
+private fun SuccessLayout(uiState: UiState.Success) {
     Column(modifier = Modifier.fillMaxSize()) {
         InfoHeader(repo = uiState.repo, owner = uiState.owner)
 

@@ -3,8 +3,19 @@ package mayudin.feature.info.api.presentation.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class UiState(
-    val owner: String,
-    val repo: String,
-    val infos: List<String>
-)
+sealed interface UiState {
+    @Immutable
+    data object Loading : UiState
+
+    @Immutable
+    data class Success(
+        val owner: String,
+        val repo: String,
+        val infos: List<String>
+    ) : UiState
+
+    @Immutable
+    data class Error(
+        val message: String
+    ) : UiState
+}

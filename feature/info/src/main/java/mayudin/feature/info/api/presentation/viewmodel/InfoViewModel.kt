@@ -6,13 +6,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import mayudin.common.utils.domain.Resultat
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import mayudin.feature.info.api.domain.model.GitHubRepo
 import mayudin.feature.info.api.domain.usecase.InfoUseCase
 import mayudin.feature.info.api.presentation.model.UiState
@@ -32,24 +32,36 @@ class InfoViewModel @AssistedInject constructor(
         ): InfoViewModel
     }
 
-    private val _uiState = MutableStateFlow<Resultat<UiState>>(Resultat.loading())
-    val uiState: StateFlow<Resultat<UiState>> = _uiState
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+        _uiState.value = UiState.Error(
+            message = throwable.message ?: "Unknown error occurred"
+        )
+    }
 
     init {
         loadInfo()
     }
 
     private fun loadInfo() {
-        val repository = GitHubRepo(owner = owner, repo = repo)
+        viewModelScope.launchSafely {
+            _uiState.value = UiState.Loading
 
-        flow {
-            emit(Resultat.loading())
+            val repository = GitHubRepo(owner = owner, repo = repo)
             val result = infoUseCase(repository)
-            emit(Resultat.success(UiState(infos = result, owner = repository.owner, repo = repository.repo)))
-        }.catch { throwable ->
-            emit(Resultat.failure(throwable))
+
+            _uiState.value = UiState.Success(
+                owner = owner,
+                repo = repo,
+                infos = result
+            )
         }
-            .onEach { _uiState.value = it }
-            .launchIn(viewModelScope)
     }
+
+    private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job =
+        this.launch(errorHandler) {
+            block()
+        }
 }
