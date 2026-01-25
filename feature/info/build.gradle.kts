@@ -34,9 +34,8 @@ android {
 }
 
 dependencies {
-    api(project(":common:utils"))
-    api(project(":common:network"))
-    api(libs.hilt.android)
+    implementation(project(":common:network"))
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -44,6 +43,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

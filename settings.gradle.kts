@@ -23,6 +23,5 @@ rootProject.name = "Github HelloWorld Demo"
 include(":app")
 include(":feature:repos")
 include(":feature:info")
-include(":common:utils")
 include(":common:network")
 include(":common:domain")

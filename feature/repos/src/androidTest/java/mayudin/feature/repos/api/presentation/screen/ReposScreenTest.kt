@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.TextFieldValue
-import mayudin.common.utils.domain.Resultat
 import mayudin.feature.repos.api.presentation.model.UiState
 import org.junit.Rule
 import org.junit.Test
@@ -63,7 +62,7 @@ class ReposScreenTest {
         composeTestRule.setContent {
             SuccessLayout(
                 repos = repos,
-                owner = "Owner",
+                owner = "testOwner",
                 onNavigation = { _, _ -> }
             )
         }
@@ -74,38 +73,67 @@ class ReposScreenTest {
     }
 
     @Test
-    fun testErrorLayoutDisplaysErrorMessage() {
+    fun testSuccessLayoutDisplaysEmptyMessage() {
         composeTestRule.setContent {
-            ErrorLayout()
+            SuccessLayout(
+                repos = emptyList(),
+                owner = "testOwner",
+                onNavigation = { _, _ -> }
+            )
         }
 
-        composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No repositories found").assertIsDisplayed()
     }
 
     @Test
-    fun testReposScreenDisplaysCorrectState() {
-        val uiState = mutableStateOf<Resultat<UiState>>(Resultat.Loading())
+    fun testErrorLayoutDisplaysErrorMessage() {
+        composeTestRule.setContent {
+            ErrorLayout(message = "Network error occurred")
+        }
 
+        composeTestRule.onNodeWithText("Network error occurred").assertIsDisplayed()
+    }
+
+    @Test
+    fun testReposScreenDisplaysLoadingState() {
         composeTestRule.setContent {
             ScreenLayout(
-                uiState = uiState.value,
-                searchText = TextFieldValue(""),
+                uiState = UiState.Loading,
+                searchText = TextFieldValue("test"),
                 onSearchTextChanged = {},
                 onNavigation = { _, _ -> }
             )
         }
 
-        // Assert Loading state
-        uiState.value = Resultat.Loading()
         composeTestRule.onNodeWithContentDescription("LoadingIndicator").assertIsDisplayed()
+    }
 
-        // Assert Success state
-        uiState.value = Resultat.Success(UiState(repos = listOf("Repo1", "Repo2")))
+    @Test
+    fun testReposScreenDisplaysSuccessState() {
+        composeTestRule.setContent {
+            ScreenLayout(
+                uiState = UiState.Success(owner = "testOwner", repos = listOf("Repo1", "Repo2")),
+                searchText = TextFieldValue("testOwner"),
+                onSearchTextChanged = {},
+                onNavigation = { _, _ -> }
+            )
+        }
+
         composeTestRule.onNodeWithText("Repo1").assertIsDisplayed()
         composeTestRule.onNodeWithText("Repo2").assertIsDisplayed()
+    }
 
-        // Assert Failure state
-        uiState.value = Resultat.Failure(Exception("Error"))
-        composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+    @Test
+    fun testReposScreenDisplaysErrorState() {
+        composeTestRule.setContent {
+            ScreenLayout(
+                uiState = UiState.Error(message = "Failed to fetch repositories"),
+                searchText = TextFieldValue("testOwner"),
+                onSearchTextChanged = {},
+                onNavigation = { _, _ -> }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Failed to fetch repositories").assertIsDisplayed()
     }
 }
