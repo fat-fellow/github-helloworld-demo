@@ -33,7 +33,6 @@ import mayudin.feature.info.R
 import mayudin.feature.info.api.presentation.model.UiState
 import mayudin.feature.info.api.presentation.viewmodel.InfoViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoScreen(
     owner: String,
@@ -45,15 +44,28 @@ fun InfoScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    Layout(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Layout(
+    uiState: UiState,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Repository Info") },
+                title = { Text(stringResource(R.string.repository_info)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -64,27 +76,17 @@ fun InfoScreen(
             )
         }
     ) { innerPadding ->
-        Layout(
-            uiState = uiState,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
-}
-
-@Composable
-private fun Layout(
-    uiState: UiState,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        when (uiState) {
-            is UiState.Loading -> LoadingLayout()
-            is UiState.Success -> SuccessLayout(uiState)
-            is UiState.Error -> ErrorLayout(uiState.message, Modifier.align(Alignment.Center))
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+        ) {
+            when (uiState) {
+                is UiState.Loading -> LoadingLayout()
+                is UiState.Success -> SuccessLayout(uiState)
+                is UiState.Error -> ErrorLayout(uiState.message, Modifier.align(Alignment.Center))
+            }
         }
     }
 }
@@ -122,13 +124,13 @@ private fun SuccessLayout(uiState: UiState.Success) {
 private fun InfoHeader(repo: String, owner: String) {
     Column(Modifier.fillMaxWidth()) {
         Text(
-            text = "Owner: $owner",
+            text = stringResource(R.string.owner_label, owner),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black,
             modifier = Modifier.padding(8.dp),
         )
         Text(
-            text = "Repo: $repo",
+            text = stringResource(R.string.repo_label, repo),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black,
             modifier = Modifier.padding(8.dp),

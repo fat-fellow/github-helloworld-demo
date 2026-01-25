@@ -29,6 +29,10 @@ class ReposViewModel @Inject constructor(
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+        onError(throwable)
+    }
+
+    private fun onError(throwable: Throwable) {
         _uiState.value = UiState.Error(
             message = throwable.message ?: "Unknown error occurred",
         )
@@ -57,12 +61,16 @@ class ReposViewModel @Inject constructor(
 
         _uiState.value = UiState.Loading
 
-        val result = reposUseCase(query)
+        try {
+            val result = reposUseCase(query)
 
-        _uiState.value = UiState.Success(
-            owner = query,
-            repos = result,
-        )
+            _uiState.value = UiState.Success(
+                owner = query,
+                repos = result,
+            )
+        } catch (e: Throwable) {
+            onError(e)
+        }
     }
 
     private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job =

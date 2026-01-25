@@ -3,4 +3,8 @@
     <string name="error_message">Something wrong happened</string>
     <string name="no_activity_message">No activity</string>
     <string name="activities">Activities</string>
+    <string name="repository_info">Repository Info</string>
+    <string name="back">Back</string>
+    <string name="owner_label">Owner: %s</string>
+    <string name="repo_label">Repo: %s</string>
 </resources>

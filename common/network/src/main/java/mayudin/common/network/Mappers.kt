@@ -7,6 +7,7 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.ServerResponseException
+import io.ktor.util.network.UnresolvedAddressException
 import mayudin.common.domain.DomainError
 
 object Mappers {
@@ -19,7 +20,7 @@ object Mappers {
                     cause = exception
                 )
             }
-            is NoTransformationFoundException -> DomainError.Network.NoConnection
+            is NoTransformationFoundException, is UnresolvedAddressException -> DomainError.Network.NoConnection
             else -> DomainError.Unknown(exception)
         }
     }

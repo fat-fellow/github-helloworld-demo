@@ -32,8 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,7 +41,6 @@ import mayudin.feature.repos.R
 import mayudin.feature.repos.api.presentation.model.UiState
 import mayudin.feature.repos.api.presentation.viewmodel.ReposViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReposScreen(
     onNavigation: (String, String) -> Unit,
@@ -54,60 +51,62 @@ fun ReposScreen(
         mutableStateOf(TextFieldValue(""))
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("GitHub Repositories") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            )
-        }
-    ) { innerPadding ->
-        ScreenLayout(
-            uiState = uiState,
-            searchText = searchText,
-            onSearchTextChanged = { text ->
-                searchText = text
-                viewModel.onSearchTextChanged(text.text)
-            },
-            onNavigation = onNavigation,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
+    ScreenLayout(
+        uiState = uiState,
+        searchText = searchText,
+        onSearchTextChanged = { text ->
+            searchText = text
+            viewModel.onSearchTextChanged(text.text)
+        },
+        onNavigation = onNavigation,
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenLayout(
     uiState: UiState,
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
     onNavigation: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        SearchBar(
-            searchText = searchText,
-            onSearchTextChanged = onSearchTextChanged,
-            hint = stringResource(R.string.search_hint)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        when (uiState) {
-            is UiState.Idle -> IdleLayout()
-            is UiState.Loading -> LoadingLayout()
-            is UiState.Success -> SuccessLayout(
-                repos = uiState.repos,
-                owner = uiState.owner,
-                onNavigation = onNavigation
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.github_repositories)) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
-            is UiState.Error -> ErrorLayout(uiState.message)
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+        ) {
+            SearchBar(
+                searchText = searchText,
+                onSearchTextChanged = onSearchTextChanged,
+                hint = stringResource(R.string.search_hint),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when (uiState) {
+                is UiState.Idle -> IdleLayout()
+                is UiState.Loading -> LoadingLayout()
+                is UiState.Success -> SuccessLayout(
+                    repos = uiState.repos,
+                    owner = uiState.owner,
+                    onNavigation = onNavigation,
+                )
+
+                is UiState.Error -> ErrorLayout(uiState.message)
+            }
         }
     }
 }
@@ -116,13 +115,10 @@ fun ScreenLayout(
 fun LoadingLayout() {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
             color = Color.Blue,
-            modifier = Modifier.semantics {
-                contentDescription = "LoadingIndicator"
-            }
         )
     }
 }
@@ -131,12 +127,12 @@ fun LoadingLayout() {
 fun IdleLayout() {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(R.string.search_hint),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
+            color = Color.Gray,
         )
     }
 }
@@ -145,17 +141,17 @@ fun IdleLayout() {
 fun SuccessLayout(
     repos: List<String>,
     owner: String,
-    onNavigation: (String, String) -> Unit
+    onNavigation: (String, String) -> Unit,
 ) {
     if (repos.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "No repositories found",
+                text = stringResource(R.string.no_repos_found),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                color = Color.Gray,
             )
         }
     } else {
@@ -166,10 +162,10 @@ fun SuccessLayout(
                 .border(
                     width = Dp.Hairline,
                     color = Color.Gray,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 ),
             contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(repos) { repo ->
                 RepoItem(repo = repo) {
@@ -188,7 +184,7 @@ fun RepoItem(repo: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onClick() }
+            .clickable { onClick() },
     )
 }
 
@@ -203,19 +199,19 @@ fun ErrorLayout(message: String) {
 fun SearchBar(
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
-    hint: String = ""
+    hint: String = "",
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-            .border(width = Dp.Hairline, color = Color.Gray, shape = RoundedCornerShape(8.dp))
+            .border(width = Dp.Hairline, color = Color.Gray, shape = RoundedCornerShape(8.dp)),
     ) {
         if (searchText.text.isEmpty()) {
             Text(
                 text = hint,
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
             )
         }
         BasicTextField(
@@ -223,7 +219,7 @@ fun SearchBar(
             onValueChange = onSearchTextChanged,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
         )
     }
 }

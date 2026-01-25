@@ -1,6 +1,7 @@
 <resources>
-    <!-- ...existing strings... -->
     <string name="error_message">Something went wrong</string>
     <string name="search_hint">Search by user… (for example: \'fat-fellow\')</string>
     <string name="no_repos_found">No repositories found</string>
+    <string name="github_repositories">GitHub Repositories</string>
+    <string name="loading_indicator">LoadingIndicator</string>
 </resources>
