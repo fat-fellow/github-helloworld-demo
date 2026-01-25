@@ -9,12 +9,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import mayudin.feature.info.domain.model.GitHubRepo
 import mayudin.feature.info.domain.usecase.InfoUseCase
+import mayudin.feature.info.presentation.model.InfoEffect
 import mayudin.feature.info.presentation.model.UiState
 
 @HiltViewModel(assistedFactory = InfoViewModel.Factory::class)
@@ -35,6 +39,9 @@ class InfoViewModel @AssistedInject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    private val _viewEffects = MutableSharedFlow<InfoEffect>()
+    val viewEffects: SharedFlow<InfoEffect> = _viewEffects.asSharedFlow()
+
     private val errorHandler = CoroutineExceptionHandler { _, throwable ->
         _uiState.value = UiState.Error(
             message = throwable.message ?: "Unknown error occurred"
@@ -43,6 +50,12 @@ class InfoViewModel @AssistedInject constructor(
 
     init {
         loadInfo()
+    }
+
+    fun onNavigateBack() {
+        viewModelScope.launchSafely {
+            _viewEffects.emit(InfoEffect.NavigateBack)
+        }
     }
 
     private fun loadInfo() {

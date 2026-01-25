@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.TextFieldValue
@@ -52,7 +53,7 @@ class ReposScreenTest {
             LoadingLayout()
         }
 
-        composeTestRule.onNodeWithContentDescription("LoadingIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -63,7 +64,7 @@ class ReposScreenTest {
             SuccessLayout(
                 repos = repos,
                 owner = "testOwner",
-                onNavigation = { _, _ -> }
+                onRepoClicked = { _, _ -> }
             )
         }
 
@@ -78,7 +79,7 @@ class ReposScreenTest {
             SuccessLayout(
                 repos = emptyList(),
                 owner = "testOwner",
-                onNavigation = { _, _ -> }
+                onRepoClicked = { _, _ -> }
             )
         }
 
@@ -101,11 +102,11 @@ class ReposScreenTest {
                 uiState = UiState.Loading,
                 searchText = TextFieldValue("test"),
                 onSearchTextChanged = {},
-                onNavigation = { _, _ -> }
+                onRepoClicked = { _, _ -> }
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("LoadingIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("LoadingIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -115,7 +116,7 @@ class ReposScreenTest {
                 uiState = UiState.Success(owner = "testOwner", repos = listOf("Repo1", "Repo2")),
                 searchText = TextFieldValue("testOwner"),
                 onSearchTextChanged = {},
-                onNavigation = { _, _ -> }
+                onRepoClicked = { _, _ -> }
             )
         }
 
@@ -130,7 +131,7 @@ class ReposScreenTest {
                 uiState = UiState.Error(message = "Failed to fetch repositories"),
                 searchText = TextFieldValue("testOwner"),
                 onSearchTextChanged = {},
-                onNavigation = { _, _ -> }
+                onRepoClicked = { _, _ -> }
             )
         }
 

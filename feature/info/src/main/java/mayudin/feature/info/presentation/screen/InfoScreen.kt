@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import mayudin.feature.info.R
+import mayudin.feature.info.presentation.model.InfoEffect
 import mayudin.feature.info.presentation.model.UiState
 import mayudin.feature.info.presentation.viewmodel.InfoViewModel
 
@@ -44,9 +46,17 @@ fun InfoScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.viewEffects.collect { effect ->
+            when (effect) {
+                is InfoEffect.NavigateBack -> onNavigateBack()
+            }
+        }
+    }
+
     Layout(
         uiState = uiState,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = viewModel::onNavigateBack
     )
 }
 

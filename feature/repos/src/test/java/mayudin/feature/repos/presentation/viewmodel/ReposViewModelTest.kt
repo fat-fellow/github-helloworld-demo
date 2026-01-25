@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import mayudin.feature.repos.domain.usecase.ReposUseCase
+import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
 import org.junit.Before
 import org.junit.Test
@@ -134,6 +135,38 @@ class ReposViewModelTest {
 
             // Back to Idle state
             assertEquals(UiState.Idle, awaitItem())
+        }
+    }
+
+    @Test
+    fun `onRepoClicked emits NavigateToInfo effect`() = testScope.runTest {
+        val owner = "testOwner"
+        val repo = "testRepo"
+
+        viewModel.viewEffects.test {
+            viewModel.onRepoClicked(owner, repo)
+
+            val effect = awaitItem()
+            assertTrue(effect is RepoEffect.NavigateToInfo)
+            assertEquals(owner, effect.owner)
+            assertEquals(repo, effect.repo)
+        }
+    }
+
+    @Test
+    fun `onRepoClicked with different parameters emits correct NavigateToInfo effect`() = testScope.runTest {
+        viewModel.viewEffects.test {
+            viewModel.onRepoClicked("owner1", "repo1")
+            val effect1 = awaitItem()
+            assertTrue(effect1 is RepoEffect.NavigateToInfo)
+            assertEquals("owner1", effect1.owner)
+            assertEquals("repo1", effect1.repo)
+
+            viewModel.onRepoClicked("owner2", "repo2")
+            val effect2 = awaitItem()
+            assertTrue(effect2 is RepoEffect.NavigateToInfo)
+            assertEquals("owner2", effect2.owner)
+            assertEquals("repo2", effect2.repo)
         }
     }
 }

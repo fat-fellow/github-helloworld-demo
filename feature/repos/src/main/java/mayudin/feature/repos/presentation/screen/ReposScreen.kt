@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import mayudin.feature.repos.R
+import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
 import mayudin.feature.repos.presentation.viewmodel.ReposViewModel
 
@@ -51,6 +54,14 @@ fun ReposScreen(
         mutableStateOf(TextFieldValue(""))
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.viewEffects.collect { effect ->
+            when (effect) {
+                is RepoEffect.NavigateToInfo -> onNavigation(effect.owner, effect.repo)
+            }
+        }
+    }
+
     ScreenLayout(
         uiState = uiState,
         searchText = searchText,
@@ -58,7 +69,7 @@ fun ReposScreen(
             searchText = text
             viewModel.onSearchTextChanged(text.text)
         },
-        onNavigation = onNavigation,
+        onRepoClicked = viewModel::onRepoClicked,
     )
 }
 
@@ -68,7 +79,7 @@ fun ScreenLayout(
     uiState: UiState,
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
-    onNavigation: (String, String) -> Unit,
+    onRepoClicked: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -102,7 +113,7 @@ fun ScreenLayout(
                 is UiState.Success -> SuccessLayout(
                     repos = uiState.repos,
                     owner = uiState.owner,
-                    onNavigation = onNavigation,
+                    onRepoClicked = onRepoClicked,
                 )
 
                 is UiState.Error -> ErrorLayout(uiState.message)
@@ -118,6 +129,7 @@ fun LoadingLayout() {
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
+            modifier = Modifier.testTag("LoadingIndicator"),
             color = Color.Blue,
         )
     }
@@ -141,7 +153,7 @@ fun IdleLayout() {
 fun SuccessLayout(
     repos: List<String>,
     owner: String,
-    onNavigation: (String, String) -> Unit,
+    onRepoClicked: (String, String) -> Unit,
 ) {
     if (repos.isEmpty()) {
         Box(
@@ -169,7 +181,7 @@ fun SuccessLayout(
         ) {
             items(repos) { repo ->
                 RepoItem(repo = repo) {
-                    onNavigation(owner, repo)
+                    onRepoClicked(owner, repo)
                 }
             }
         }
