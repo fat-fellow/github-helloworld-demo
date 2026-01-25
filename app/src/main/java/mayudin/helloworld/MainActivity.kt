@@ -11,10 +11,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import mayudin.feature.info.api.presentation.navigation.InfoRoute
-import mayudin.feature.info.api.presentation.navigation.openInfo
-import mayudin.feature.repos.api.presentation.navigation.ReposRoute
-import mayudin.feature.repos.api.presentation.navigation.openRepos
+import mayudin.feature.info.presentation.navigation.InfoRoute
+import mayudin.feature.info.presentation.navigation.openInfo
+import mayudin.feature.repos.presentation.navigation.ReposRoute
+import mayudin.feature.repos.presentation.navigation.openRepos
 import mayudin.helloworld.ui.theme.GithubHelloWorldDemoTheme
 
 @AndroidEntryPoint
