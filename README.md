@@ -42,6 +42,9 @@ The project includes both unit and instrumentation tests:
 
 # Run instrumentation tests on connected device/emulator
 ./gradlew app:connectedDebugAndroidTest
+
+# Check code formatting
+./gradlew ktlintCheck
 ```
 
 Tests currently cover the **Repos** feature, showing how tests can be structured in a modular architecture.
