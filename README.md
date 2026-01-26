@@ -52,6 +52,8 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 ## Areas to Explore
 
 - Gradle convention plugins for shared configuration
+- Konsist for architecture tests and consistency validation
+- Detekt for static code analysis
 
 ## Project Layout
 
