@@ -59,7 +59,7 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 ## Project Layout
 
 ```
-├── app/                         # Application entry point
+├── app/                        # Application entry point
 │   ├── MainActivity.kt         # Navigation host and DI setup
 │
 ├── common/                     # Shared core modules
