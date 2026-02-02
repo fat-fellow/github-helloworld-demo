@@ -45,6 +45,9 @@ The project includes both unit and instrumentation tests:
 
 # Check code formatting
 ./gradlew ktlintCheck
+
+# Check code style with Detekt
+./gradlew detekt
 ```
 
 Tests currently cover the **Repos** feature, showing how tests can be structured in a modular architecture.
@@ -53,7 +56,6 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 
 - Gradle convention plugins for shared configuration
 - Konsist for architecture tests and consistency validation
-- Detekt for static code analysis
 - Code coverage (Jacoco / Kover)
 
 ## Project Layout

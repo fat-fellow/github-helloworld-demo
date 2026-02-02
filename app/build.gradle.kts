@@ -1,3 +1,4 @@
+import dev.detekt.gradle.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -34,11 +36,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_21
-        }
-    }
     buildFeatures {
         compose = true
     }
@@ -47,6 +44,18 @@ android {
 allprojects {
     // worth moving to convention plugin
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    detekt {
+        buildUponDefaultConfig = true
+        allRules = false
+        config.setFrom("$rootDir/config/detekt/detekt.yml")
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        reports {
+            html.required.set(true)
+        }
+    }
 }
 
 dependencies {
