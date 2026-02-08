@@ -36,6 +36,16 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = project.libs.findVersion("targetSdk").get().requiredVersion.toInt()
                 testOptions.animationsDisabled = true
+
+                buildTypes {
+                    release {
+                        isMinifyEnabled = true
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard-rules.pro",
+                        )
+                    }
+                }
             }
         }
     }
