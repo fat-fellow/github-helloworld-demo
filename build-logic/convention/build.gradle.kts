@@ -24,6 +24,7 @@ dependencies {
     compileOnly(libs.compose.gradle.plugin)
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.ksp.gradle.plugin)
+    implementation(libs.detekt.gradle.plugin)
     implementation(gradleApi())
     lintChecks(libs.androidx.lint.gradle)
 }
@@ -68,6 +69,10 @@ gradlePlugin {
         register("androidLint") {
             id = libs.plugins.mayudin.android.lint.get().pluginId
             implementationClass = "AndroidLintConventionPlugin"
+        }
+        register("detekt") {
+            id = libs.plugins.mayudin.android.detekt.get().pluginId
+            implementationClass = "DetektConventionPlugin"
         }
     }
 }

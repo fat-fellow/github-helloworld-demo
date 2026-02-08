@@ -1,4 +1,4 @@
-package mayudin.feature.repos.presentation.screen
+package mayudin.feature.repos.presentation.ui
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +23,7 @@ class ReposScreenTest {
             SearchBar(
                 searchText = remember { mutableStateOf(TextFieldValue("")) }.value,
                 onSearchTextChanged = {},
-                hint = "Search Repos"
+                hint = "Search Repos",
             )
         }
 
@@ -38,7 +38,7 @@ class ReposScreenTest {
             SearchBar(
                 searchText = searchText.value,
                 onSearchTextChanged = { searchText.value = it },
-                hint = "Search Repos"
+                hint = "Search Repos",
             )
         }
 
@@ -63,7 +63,7 @@ class ReposScreenTest {
             SuccessLayout(
                 repos = repos,
                 owner = "testOwner",
-                onRepoClicked = { _, _ -> }
+                onRepoClicked = { _, _ -> },
             )
         }
 
@@ -78,7 +78,7 @@ class ReposScreenTest {
             SuccessLayout(
                 repos = emptyList(),
                 owner = "testOwner",
-                onRepoClicked = { _, _ -> }
+                onRepoClicked = { _, _ -> },
             )
         }
 
@@ -101,7 +101,7 @@ class ReposScreenTest {
                 uiState = UiState.Loading,
                 searchText = TextFieldValue("test"),
                 onSearchTextChanged = {},
-                onRepoClicked = { _, _ -> }
+                onRepoClicked = { _, _ -> },
             )
         }
 
@@ -115,7 +115,7 @@ class ReposScreenTest {
                 uiState = UiState.Success(owner = "testOwner", repos = listOf("Repo1", "Repo2")),
                 searchText = TextFieldValue("testOwner"),
                 onSearchTextChanged = {},
-                onRepoClicked = { _, _ -> }
+                onRepoClicked = { _, _ -> },
             )
         }
 
@@ -130,7 +130,7 @@ class ReposScreenTest {
                 uiState = UiState.Error(message = "Failed to fetch repositories"),
                 searchText = TextFieldValue("testOwner"),
                 onSearchTextChanged = {},
-                onRepoClicked = { _, _ -> }
+                onRepoClicked = { _, _ -> },
             )
         }
 

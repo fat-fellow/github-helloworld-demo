@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ApplicationExtension
-import dev.detekt.gradle.Detekt
 
 plugins {
     alias(libs.plugins.mayudin.android.application)
@@ -13,23 +12,6 @@ configure<ApplicationExtension> {
         applicationId = "mayudin.helloworld"
         versionCode = 1
         versionName = "1.0"
-    }
-}
-
-allprojects {
-    // worth moving to convention plugin
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-
-    detekt {
-        buildUponDefaultConfig = true
-        allRules = false
-        config.setFrom("$rootDir/config/detekt/detekt.yml")
-    }
-
-    tasks.withType<Detekt>().configureEach {
-        reports {
-            html.required.set(true)
-        }
     }
 }
 

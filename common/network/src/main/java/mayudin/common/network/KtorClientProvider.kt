@@ -7,9 +7,9 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.serialization.json.Json
 
 @Singleton
 class KtorClientProviderImpl @Inject constructor() : KtorClientProvider {
@@ -31,4 +31,3 @@ interface KtorClientProviderModule {
     @Singleton
     fun bindKtorClientProvider(impl: KtorClientProviderImpl): KtorClientProvider
 }
-

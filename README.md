@@ -10,7 +10,7 @@ An android application showcasing how I approach to code with modern development
 - **Navigation**: Compose Navigation
 - **Dependency Injection**: Hilt
 - **Concurrency**: Kotlin Flow and Coroutines
-- **Testing**: Unit tests + Instrumentation tests
+- **Testing**: Unit tests + Instrumentation tests with MockK, and Compose Testing + Jacoco for code coverage
 
 ## Overview
 
@@ -29,6 +29,7 @@ Design made by the developer, sorry :)
 - **Two Features**:
     - **Repos**: Browse public repositories by username
     - **Info**: View activity history for selected repositories
+-- **Convention Plugins**: Custom Gradle plugins in `build-logic` to standardize module configurations and reduce boilerplate
 
 ## Testing
 
@@ -51,16 +52,18 @@ The project includes both unit and instrumentation tests:
 
 # Run lint
 ./gradlew lint
+
+# Run jacoco after tests to check code coverage (build/reports in corresponding dirs)
+./gradlew createDebugCombinedCoverageReport
 ```
 
 Tests currently cover the **Repos** feature, showing how tests can be structured in a modular architecture.
 
 ## Areas to Explore
 
-- Gradle convention plugins for shared configuration
 - Konsist for architecture tests and consistency validation
-- Code coverage (Jacoco / Kover)
 - Add a rule example for Lint and Detekt
+- Add description for the catching an error design decision
 
 ## Project Layout
 

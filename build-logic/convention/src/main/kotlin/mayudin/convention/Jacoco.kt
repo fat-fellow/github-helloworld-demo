@@ -66,83 +66,22 @@ private fun String.capitalize() = replaceFirstChar {
     if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
 }
 
-/**
- * Creates a new task that generates a combined coverage report with data from local and
- * instrumented tests.
- *
- * `create{variant}CombinedCoverageReport`
- *
- * Note that coverage data must exist before running the task. This allows us to run device
- * tests on CI using a different Github Action or an external device farm.
- */
 internal fun Project.configureJacoco(
     commonExtension: CommonExtension,
     androidComponentsExtension: AndroidComponentsExtension<*, *, *>,
 ) {
+
+    commonExtension.buildTypes.configureEach {
+        enableAndroidTestCoverage = true
+        enableUnitTestCoverage = true
+    }
+
     tasks.withType<Test> {
         extensions.configure(JacocoTaskExtension::class) {
             isIncludeNoLocationClasses = true
         }
     }
 
-    tasks.register("jacocoTestReport", JacocoReport::class) {
-        group = "Reporting"
-        description = "Generate JaCoCo coverage reports."
-
-        val coverageSourceDirs = files(
-            "src/main/java",
-            "src/main/kotlin",
-        )
-
-        val buildDir = "${layout.buildDirectory.get().asFile}"
-        val classDirs = fileTree("${buildDir}/tmp/kotlin-classes") {
-            exclude(
-                "**/R.class",
-                "**/R$*.class",
-                "**/BuildConfig.*",
-                "**/Manifest*.*",
-                "**/Dagger*.*",
-                "**/*_Hilt*.*",
-                "**/*_MembersInjector*.*",
-                "**/*Companion*.*",
-                "**/*Module*.*",
-                "**/screen/**",
-                "**/screens/**",
-                "**/components/**",
-                "**/composable/**",
-                "**/composables/**",
-                "**/di/**",
-                "**/model/**",
-                "**/models/**",
-                "**/com/**/*\$*",
-                "**/*Composable*",
-            )
-        }
-
-        classDirectories.setFrom(
-            classDirs.files.filter { file ->
-                file.path.contains("/mayudin/")
-            },
-        )
-
-        val executionDataFiles = fileTree(buildDir) {
-            include(
-                "outputs/**/*.exec",
-            )
-        }
-
-        sourceDirectories.setFrom(coverageSourceDirs)
-        executionData.setFrom(executionDataFiles)
-
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-            xml.outputLocation.set(file("$buildDir/reports/jacoco/test/jacocoTestReport.xml"))
-            html.outputLocation.set(file("$buildDir/reports/jacoco/html"))
-        }
-    }
-
-    //expected code to leave
     androidComponentsExtension.onVariants { variant ->
         val myObjFactory = project.objects
         val buildDir = layout.buildDirectory.get().asFile
@@ -154,7 +93,6 @@ internal fun Project.configureJacoco(
                 "create${variant.name.capitalize()}CombinedCoverageReport",
                 JacocoReport::class,
             ) {
-
                 classDirectories.setFrom(
                     allJars,
                     allDirectories.map { dirs ->
@@ -187,7 +125,6 @@ internal fun Project.configureJacoco(
                         .matching { include("**/*.ec") },
                 )
             }
-
 
         variant.artifacts.forScope(ScopedArtifacts.Scope.PROJECT)
             .use(reportTask)

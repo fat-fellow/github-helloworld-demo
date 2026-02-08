@@ -1,6 +1,10 @@
 package mayudin.feature.repos.presentation.viewmodel
 
 import app.cash.turbine.test
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -13,10 +17,6 @@ import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
 import org.junit.Before
 import org.junit.Test
-import io.mockk.coEvery
-import io.mockk.mockk
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReposViewModelTest {

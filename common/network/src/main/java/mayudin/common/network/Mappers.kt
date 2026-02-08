@@ -17,7 +17,7 @@ object Mappers {
             is ServerResponseException, is ClientRequestException, is RedirectResponseException -> {
                 DomainError.Network.Server(
                     code = (exception as ResponseException).response.status.value,
-                    cause = exception
+                    cause = exception,
                 )
             }
             is NoTransformationFoundException, is UnresolvedAddressException -> DomainError.Network.NoConnection()

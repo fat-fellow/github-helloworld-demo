@@ -1,4 +1,4 @@
-package mayudin.feature.repos.presentation.screen
+package mayudin.feature.repos.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,10 +45,7 @@ import mayudin.feature.repos.presentation.model.UiState
 import mayudin.feature.repos.presentation.viewmodel.ReposViewModel
 
 @Composable
-fun ReposScreen(
-    onNavigation: (String, String) -> Unit,
-    viewModel: ReposViewModel = hiltViewModel(),
-) {
+fun ReposScreen(onNavigation: (String, String) -> Unit, viewModel: ReposViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchText by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))

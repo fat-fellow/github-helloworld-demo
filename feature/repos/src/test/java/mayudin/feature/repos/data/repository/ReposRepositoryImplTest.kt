@@ -3,6 +3,8 @@ package mayudin.feature.repos.data.repository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import mayudin.common.domain.DomainError
@@ -11,8 +13,6 @@ import mayudin.feature.repos.data.model.Repo
 import mayudin.feature.repos.domain.repository.ReposRepository
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class ReposRepositoryImplTest {
 

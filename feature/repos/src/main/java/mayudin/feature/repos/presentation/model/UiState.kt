@@ -11,13 +11,8 @@ sealed interface UiState {
     data object Loading : UiState
 
     @Immutable
-    data class Success(
-        val owner: String,
-        val repos: List<String>
-    ) : UiState
+    data class Success(val owner: String, val repos: List<String>) : UiState
 
     @Immutable
-    data class Error(
-        val message: String
-    ) : UiState
+    data class Error(val message: String) : UiState
 }

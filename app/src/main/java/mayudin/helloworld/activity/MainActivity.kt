@@ -33,10 +33,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-) {
+fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = ReposRoute,
@@ -46,8 +43,7 @@ fun AppNavHost(
             navController.navigate(InfoRoute(owner, repo))
         }
         openInfo(
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = { navController.popBackStack() },
         )
     }
 }
-

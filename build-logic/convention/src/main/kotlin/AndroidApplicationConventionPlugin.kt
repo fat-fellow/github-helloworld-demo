@@ -27,10 +27,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "com.android.application")
             apply(plugin = "org.jetbrains.kotlin.android")
+            apply(plugin = "org.jlleitschuh.gradle.ktlint")
             apply(plugin = "mayudin.convention.android.hilt")
             apply(plugin = "mayudin.convention.android.application.compose")
             apply(plugin = "mayudin.convention.android.lint")
             apply(plugin = "mayudin.convention.android.jacoco")
+            apply(plugin = "mayudin.convention.android.detekt")
 
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)

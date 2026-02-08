@@ -1,4 +1,4 @@
-package mayudin.feature.info.presentation.screen
+package mayudin.feature.info.presentation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,7 +56,7 @@ fun InfoScreen(
 
     Layout(
         uiState = uiState,
-        onNavigateBack = viewModel::onNavigateBack
+        onNavigateBack = viewModel::onNavigateBack,
     )
 }
 
@@ -65,7 +65,7 @@ fun InfoScreen(
 private fun Layout(
     uiState: UiState,
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
@@ -75,16 +75,16 @@ private fun Layout(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
+                ),
             )
-        }
+        },
     ) { innerPadding ->
         Box(
             modifier = modifier

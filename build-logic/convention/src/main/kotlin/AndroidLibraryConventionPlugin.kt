@@ -30,8 +30,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "com.android.library")
             apply(plugin = "org.jetbrains.kotlin.android")
+            apply(plugin = "org.jlleitschuh.gradle.ktlint")
             apply(plugin = "mayudin.convention.android.lint")
             apply(plugin = "mayudin.convention.android.jacoco")
+            apply(plugin = "mayudin.convention.android.detekt")
 
             extensions.configure<LibraryExtension> {
                 namespace = path.split("""\W""".toRegex()).drop(1).distinct().joinToString(separator = ".").lowercase()

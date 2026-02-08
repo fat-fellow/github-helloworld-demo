@@ -3,6 +3,7 @@ package mayudin.feature.repos.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -16,16 +17,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import mayudin.common.domain.utils.safeRun
 import mayudin.feature.repos.domain.usecase.ReposUseCase
 import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class ReposViewModel @Inject constructor(
-    private val reposUseCase: ReposUseCase,
-) : ViewModel() {
+class ReposViewModel @Inject constructor(private val reposUseCase: ReposUseCase) : ViewModel() {
 
     private val queryFlow = MutableStateFlow("")
 
@@ -48,7 +47,7 @@ class ReposViewModel @Inject constructor(
     init {
         viewModelScope.launchSafely {
             queryFlow
-                .debounce(300L)
+                .debounce(DEBOUNCE)
                 .distinctUntilChanged()
                 .collect { query ->
                     loadRepos(query)
@@ -74,20 +73,24 @@ class ReposViewModel @Inject constructor(
 
         _uiState.value = UiState.Loading
 
-        try {
-            val result = reposUseCase(query)
+        safeRun(
+            {
+                val result = reposUseCase(query)
 
-            _uiState.value = UiState.Success(
-                owner = query,
-                repos = result,
-            )
-        } catch (e: Throwable) {
-            onError(e)
-        }
+                _uiState.value = UiState.Success(
+                    owner = query,
+                    repos = result,
+                )
+            },
+            ::onError,
+        )
     }
 
-    private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job =
-        this.launch(errorHandler) {
-            block()
-        }
+    private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job = this.launch(errorHandler) {
+        block()
+    }
+
+    companion object {
+        private const val DEBOUNCE = 300L
+    }
 }

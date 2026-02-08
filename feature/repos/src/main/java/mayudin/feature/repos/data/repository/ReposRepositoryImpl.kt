@@ -4,23 +4,15 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import mayudin.common.network.Mappers
-import mayudin.feature.repos.data.api.ReposApi
-import mayudin.feature.repos.domain.repository.ReposRepository
 import javax.inject.Inject
 import javax.inject.Singleton
+import mayudin.common.network.util.safeRequestRun
+import mayudin.feature.repos.data.api.ReposApi
+import mayudin.feature.repos.domain.repository.ReposRepository
 
 @Singleton
-class ReposRepositoryImpl @Inject constructor(
-    private val api: ReposApi
-) : ReposRepository {
-    override suspend fun fetchRepos(user: String): List<String> {
-        return try {
-            api.getUserRepos(user).map { it.name }
-        } catch (exception: Throwable) {
-            throw Mappers.mapToDomain(exception)
-        }
-    }
+class ReposRepositoryImpl @Inject constructor(private val api: ReposApi) : ReposRepository {
+    override suspend fun fetchRepos(user: String) = safeRequestRun { api.getUserRepos(user).map { it.name } }
 }
 
 @Module

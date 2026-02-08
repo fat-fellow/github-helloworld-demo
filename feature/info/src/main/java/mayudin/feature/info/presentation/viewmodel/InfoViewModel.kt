@@ -25,15 +25,12 @@ import mayudin.feature.info.presentation.model.UiState
 class InfoViewModel @AssistedInject constructor(
     @Assisted("owner") private val owner: String,
     @Assisted("repo") private val repo: String,
-    private val infoUseCase: InfoUseCase
+    private val infoUseCase: InfoUseCase,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            @Assisted("owner") owner: String,
-            @Assisted("repo") repo: String
-        ): InfoViewModel
+        fun create(@Assisted("owner") owner: String, @Assisted("repo") repo: String): InfoViewModel
     }
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
@@ -44,7 +41,7 @@ class InfoViewModel @AssistedInject constructor(
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable ->
         _uiState.value = UiState.Error(
-            message = throwable.message ?: "Unknown error occurred"
+            message = throwable.message ?: "Unknown error occurred",
         )
     }
 
@@ -68,13 +65,12 @@ class InfoViewModel @AssistedInject constructor(
             _uiState.value = UiState.Success(
                 owner = owner,
                 repo = repo,
-                infos = result
+                infos = result,
             )
         }
     }
 
-    private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job =
-        this.launch(errorHandler) {
-            block()
-        }
+    private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job = this.launch(errorHandler) {
+        block()
+    }
 }

@@ -28,7 +28,7 @@ turbine = "1.2.1"
 kotlinx-coroutines-test = "1.10.2"
 ktlint = "14.0.1"
 detekt = "2.0.0-alpha.2"
-google-ksp = "2.3.4"
+google-ksp = "2.3.5"
 androidx-lint-gradle = "1.0.0-alpha05"
 android-tools = "32.0.0"
 android-gradle-plugin = "9.0.0"
@@ -79,6 +79,7 @@ androidx-lint-gradle = { group = "androidx.lint", name = "lint-gradle", version.
 compose-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "google-ksp" }
+detekt-gradle-plugin = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -102,3 +103,4 @@ mayudin-android-library = { id = "mayudin.convention.android.library" }
 mayudin-android-library-compose = { id = "mayudin.convention.android.library.compose" }
 mayudin-android-jacoco = { id = "mayudin.convention.android.jacoco" }
 mayudin-android-lint = { id = "mayudin.convention.android.lint" }
+mayudin-android-detekt = { id = "mayudin.convention.android.detekt" }
