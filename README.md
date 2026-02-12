@@ -63,7 +63,6 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 
 - Konsist for architecture tests and consistency validation
 - Add a rule example for Lint and Detekt
-- Add description for the catching an error design decision
 
 ## Project Layout
 
@@ -80,3 +79,13 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 │   └── repos/                  # Repositories list screen
 │
 └── build.gradle.kts            # Root Gradle configuration
+```
+
+## Some design decisions
+### Why use exception catching in the repository layer instead of a monadic Result type
+
+[Here](https://github.com/fat-fellow/github-helloworld-demo/blob/main/common/domain/src/main/java/mayudin/common/domain/utils/ConvenienceFunctions.kt#L7)
+
+- I've worked with monadic wrappers like `Result` / `Either` before, and they work well, but in this case they introduced a lot of unwrapping between layers. Letting exceptions propagate keep business logic straightforward and avoids turning the code into chains of result handling.
+- The repository translates low-level failures into domain exceptions so higher layers don’t need to know about networking or serialization details.
+- Exceptions are ultimately caught in the ViewModel and mapped to UI state. I didn't bother myself to support it in this sample, but in real products, it’s usually better to react intentionally rather than just display a generic error.
