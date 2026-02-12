@@ -5,7 +5,6 @@ import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.RedirectResponseException
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.util.network.UnresolvedAddressException
 import mayudin.common.domain.DomainError
@@ -16,10 +15,11 @@ object Mappers {
             is HttpRequestTimeoutException, is ConnectTimeoutException -> DomainError.Network.Timeout()
             is ServerResponseException, is ClientRequestException, is RedirectResponseException -> {
                 DomainError.Network.Server(
-                    code = (exception as ResponseException).response.status.value,
+                    code = exception.response.status.value,
                     cause = exception,
                 )
             }
+
             is NoTransformationFoundException, is UnresolvedAddressException -> DomainError.Network.NoConnection()
             else -> DomainError.Unknown(exception)
         }
