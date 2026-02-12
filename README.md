@@ -82,7 +82,7 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 ```
 
 ## Some design decisions
-### Why use exception catching in the repository layer instead of a monadic Result type
+### Why use exception catching instead of a monadic Result type
 
 [Here](https://github.com/fat-fellow/github-helloworld-demo/blob/main/common/domain/src/main/java/mayudin/common/domain/utils/ConvenienceFunctions.kt#L7)
 
