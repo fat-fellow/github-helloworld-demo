@@ -29,7 +29,7 @@ Design made by the developer, sorry :)
 - **Two Features**:
     - **Repos**: Browse public repositories by username
     - **Info**: View activity history for selected repositories
--- **Convention Plugins**: Custom Gradle plugins in `build-logic` to standardize module configurations and reduce boilerplate
+- **Convention Plugins**: Custom Gradle plugins in `build-logic` to standardize module configurations and reduce boilerplate
 
 ## Testing
 
