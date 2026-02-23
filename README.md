@@ -44,6 +44,9 @@ The project includes both unit and instrumentation tests:
 # Run instrumentation tests on connected device/emulator
 ./gradlew app:connectedDebugAndroidTest
 
+# Run architecture and consistency tests (Konsist)
+./gradlew :konsistTest:test
+
 # Check code formatting
 ./gradlew ktlintCheck
 
@@ -57,12 +60,11 @@ The project includes both unit and instrumentation tests:
 ./gradlew createDebugCombinedCoverageReport
 ```
 
-Tests currently cover the **Repos** feature, showing how tests can be structured in a modular architecture.
+Tests currently cover the **Repos** feature, showing how tests can be structured in a modular architecture. The `:konsistTest` module contains Konsist tests that guard naming conventions, layer isolation, and annotation rules across the whole codebase.
 
 ## Areas to Explore
 
-- Konsist for architecture tests and consistency validation
-- Add a rule example for Lint and Detekt
+- Add a custom rule example for Lint and Detekt
 
 ## Project Layout
 
@@ -77,6 +79,8 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 ├── feature/                    # Feature modules
 │   ├── info/                   # Repository info screen
 │   └── repos/                  # Repositories list screen
+│
+├── konsistTest/                # Architecture & consistency tests (Konsist)
 │
 └── build.gradle.kts            # Root Gradle configuration
 ```

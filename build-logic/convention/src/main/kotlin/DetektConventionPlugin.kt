@@ -22,6 +22,7 @@ class DetektConventionPlugin : Plugin<Project> {
             }
 
             tasks.withType<Detekt>().configureEach {
+                autoCorrect.set(true)
                 reports {
                     html.required.set(true)
                 }
