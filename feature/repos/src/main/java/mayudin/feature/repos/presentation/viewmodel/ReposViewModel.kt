@@ -3,7 +3,6 @@ package mayudin.feature.repos.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -14,13 +13,16 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import mayudin.common.domain.utils.safeRun
 import mayudin.feature.repos.domain.usecase.ReposUseCase
 import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
+import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -49,9 +51,9 @@ class ReposViewModel @Inject constructor(private val reposUseCase: ReposUseCase)
             queryFlow
                 .debounce(DEBOUNCE)
                 .distinctUntilChanged()
-                .collect { query ->
-                    loadRepos(query)
-                }
+                .onEach { loadRepos(it) }
+                .catch { onError(it) }
+                .collect()
         }
     }
 
@@ -73,16 +75,11 @@ class ReposViewModel @Inject constructor(private val reposUseCase: ReposUseCase)
 
         _uiState.value = UiState.Loading
 
-        safeRun(
-            {
-                val result = reposUseCase(query)
+        val result = reposUseCase(query)
 
-                _uiState.value = UiState.Success(
-                    owner = query,
-                    repos = result,
-                )
-            },
-            ::onError,
+        _uiState.value = UiState.Success(
+            owner = query,
+            repos = result,
         )
     }
 
