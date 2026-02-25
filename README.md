@@ -5,7 +5,7 @@ An android application showcasing how I approach to code with modern development
 ## Tech Stack
 
 - **Architecture**: MVVM with Clean Architecture principles
-- **Networking**: Ktor + Kotlin Serialization
+- **Networking**: Ktor (+ retry policy + jitter) + Kotlin Serialization
 - **Storage**: Room
 - **UI**: Jetpack Compose with Material Design 3
 - **Navigation**: Compose Navigation
