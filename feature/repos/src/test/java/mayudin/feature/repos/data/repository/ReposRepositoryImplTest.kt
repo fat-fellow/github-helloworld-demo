@@ -7,25 +7,24 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import mayudin.common.domain.DomainError
 import mayudin.feature.repos.data.api.ReposApi
 import mayudin.feature.repos.data.local.RepoEntity
+import mayudin.feature.repos.data.local.RepoSyncMetadata
 import mayudin.feature.repos.data.local.ReposDao
 import mayudin.feature.repos.data.model.Repo
-import mayudin.feature.repos.domain.repository.ReposRepository
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class ReposRepositoryImplTest {
 
     private lateinit var api: ReposApi
     private lateinit var reposDao: ReposDao
-    private lateinit var repository: ReposRepository
+    private lateinit var repository: ReposRepositoryImpl
 
     @Before
     fun setUp() {
@@ -34,69 +33,101 @@ class ReposRepositoryImplTest {
         repository = ReposRepositoryImpl(api, reposDao)
     }
 
-    @Test
-    fun `fetchRepos - emits cached repos immediately from DB`() = runTest {
-        // Arrange
-        val user = "testUser"
-        val cachedEntities = listOf(
-            RepoEntity(ownerId = user, name = "Repo1"),
-            RepoEntity(ownerId = user, name = "Repo2"),
-        )
-        every { reposDao.observeRepos(user) } returns flowOf(cachedEntities)
-        coEvery { api.getUserRepos(user) } returns listOf(Repo(1, "Repo1"), Repo(2, "Repo2"))
-        coEvery { reposDao.replaceRepos(user, any()) } just Runs
+    // ── TTL valid — serve cache, skip network ─────────────────────────────
 
-        // Act & Assert
+    @Test
+    fun `fetchRepos - emits cached repos and skips network when TTL is valid`() = runTest {
+        val user = "testUser"
+        val recentSync = System.currentTimeMillis() - 10_000L // 10 s ago, within 1 min TTL
+        coEvery { reposDao.getSyncMetadata(user) } returns RepoSyncMetadata(user, recentSync)
+        coEvery { reposDao.countRepos(user) } returns 2
+        every { reposDao.observeRepos(user) } returns flowOf(
+            listOf(RepoEntity(user, "Repo1"), RepoEntity(user, "Repo2")),
+        )
+
         repository.fetchRepos(user).test {
             assertEquals(listOf("Repo1", "Repo2"), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
+
+        coVerify(exactly = 0) { api.getUserRepos(any()) }
     }
 
-    @Test
-    fun `fetchRepos - stores fresh repos in DB on network success`() = runTest {
-        // Arrange
-        val user = "testUser"
-        val freshRepos = listOf(Repo(id = 1L, name = "FreshRepo"))
-        every { reposDao.observeRepos(user) } returns flowOf(emptyList())
-        coEvery { api.getUserRepos(user) } returns freshRepos
-        coEvery { reposDao.replaceRepos(user, any()) } just Runs
+    // ── No cache, TTL expired — foreground load ───────────────────────────
 
-        // Act
+    @Test
+    fun `fetchRepos - loads from network and emits result when cache is empty`() = runTest {
+        val user = "testUser"
+        coEvery { reposDao.getSyncMetadata(user) } returns null
+        coEvery { reposDao.countRepos(user) } returns 0
+        coEvery { api.getUserRepos(user) } returns listOf(Repo(1, "FreshRepo"))
+        coEvery { reposDao.replaceRepos(user, any()) } just Runs
+        coEvery { reposDao.upsertSyncMetadata(any()) } just Runs
+        every { reposDao.observeRepos(user) } returns flowOf(
+            listOf(RepoEntity(user, "FreshRepo")),
+        )
+
         repository.fetchRepos(user).test {
-            awaitItem() // empty list from cache
+            assertEquals(listOf("FreshRepo"), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
 
-        // Assert — cache was updated with the network result
-        coVerify { reposDao.replaceRepos(user, listOf(RepoEntity(ownerId = user, name = "FreshRepo"))) }
+        coVerify { reposDao.replaceRepos(user, listOf(RepoEntity(user, "FreshRepo"))) }
+        coVerify { reposDao.upsertSyncMetadata(match { it.ownerId == user }) }
     }
 
     @Test
-    fun `fetchRepos - throws DomainError - when API call fails`() = runTest {
-        // Arrange
+    fun `fetchRepos - propagates DomainError when cache is empty and network fails`() = runTest {
         val user = "testUser"
+        coEvery { reposDao.getSyncMetadata(user) } returns null
+        coEvery { reposDao.countRepos(user) } returns 0
+        coEvery { api.getUserRepos(user) } throws RuntimeException("network down")
         every { reposDao.observeRepos(user) } returns flowOf(emptyList())
-        coEvery { api.getUserRepos(user) } throws RuntimeException("API error")
 
-        // Act & Assert
         repository.fetchRepos(user).test {
-            assertIs<DomainError>(awaitError())
+            assertTrue(awaitError() is DomainError)
         }
     }
 
-    @Test
-    fun `fetchRepos - emits empty list - when DB is empty and network returns nothing`() = runTest {
-        // Arrange
-        val user = "testUser"
-        every { reposDao.observeRepos(user) } returns flowOf(emptyList())
-        coEvery { api.getUserRepos(user) } returns emptyList()
-        coEvery { reposDao.replaceRepos(user, any()) } just Runs
+    // ── Cache exists, TTL expired — background refresh ────────────────────
 
-        // Act & Assert
+    @Test
+    fun `fetchRepos - emits stale cache immediately and updates after background refresh`() = runTest {
+        val user = "testUser"
+        val expiredSync = System.currentTimeMillis() - 120_000L // 2 min ago, TTL expired
+        coEvery { reposDao.getSyncMetadata(user) } returns RepoSyncMetadata(user, expiredSync)
+        coEvery { reposDao.countRepos(user) } returns 1
+        coEvery { api.getUserRepos(user) } returns listOf(Repo(2, "FreshRepo"))
+        coEvery { reposDao.replaceRepos(user, any()) } just Runs
+        coEvery { reposDao.upsertSyncMetadata(any()) } just Runs
+        every { reposDao.observeRepos(user) } returns flowOf(
+            listOf(RepoEntity(user, "StaleRepo")),
+            listOf(RepoEntity(user, "FreshRepo")),
+        )
+
         repository.fetchRepos(user).test {
-            val item = awaitItem()
-            assertTrue(item.isEmpty())
+            assertEquals(listOf("StaleRepo"), awaitItem())
+            assertEquals(listOf("FreshRepo"), awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { reposDao.replaceRepos(user, listOf(RepoEntity(user, "FreshRepo"))) }
+    }
+
+    @Test
+    fun `fetchRepos - keeps serving stale cache when background refresh fails`() = runTest {
+        val user = "testUser"
+        val expiredSync = System.currentTimeMillis() - 120_000L
+        coEvery { reposDao.getSyncMetadata(user) } returns RepoSyncMetadata(user, expiredSync)
+        coEvery { reposDao.countRepos(user) } returns 1
+        coEvery { api.getUserRepos(user) } throws RuntimeException("network down")
+        every { reposDao.observeRepos(user) } returns flowOf(
+            listOf(RepoEntity(user, "StaleRepo")),
+        )
+
+        // Flow must complete without error — background failure is swallowed
+        repository.fetchRepos(user).test {
+            assertEquals(listOf("StaleRepo"), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

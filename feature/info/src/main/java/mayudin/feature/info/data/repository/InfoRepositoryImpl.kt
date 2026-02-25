@@ -1,9 +1,5 @@
 package mayudin.feature.info.data.repository
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 import javax.inject.Singleton
 import mayudin.common.network.util.tryCatching
@@ -16,12 +12,4 @@ class InfoRepositoryImpl @Inject constructor(private val api: InfoApi) : InfoRep
 
     override suspend fun getReposActivity(repo: GitHubRepo) =
         tryCatching { api.getReposActivity(repo.owner, repo.repo).map { it.activityType } }
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-interface InfoRepositoryModule {
-    @Binds
-    @Singleton
-    fun bindInfoRepository(impl: InfoRepositoryImpl): InfoRepository
 }

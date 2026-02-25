@@ -6,6 +6,7 @@ An android application showcasing how I approach to code with modern development
 
 - **Architecture**: MVVM with Clean Architecture principles
 - **Networking**: Ktor + Kotlin Serialization
+- **Storage**: Room
 - **UI**: Jetpack Compose with Material Design 3
 - **Navigation**: Compose Navigation
 - **Dependency Injection**: Hilt
@@ -65,6 +66,8 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 ## Areas to Explore
 
 - Add a custom rule example for Lint and Detekt
+- Add logic for handling pagination in the Repos screen (RemoteMediator/Paging3 maybe?)
+- Add logic for handling exceptions and stale data in Repos screen
 
 ## Project Layout
 
@@ -85,11 +88,14 @@ Tests currently cover the **Repos** feature, showing how tests can be structured
 └── build.gradle.kts            # Root Gradle configuration
 ```
 
-## Some design decisions
-### Why use exception catching instead of a monadic Result type
+## Why use exception catching instead of a monadic Result type
 
 [Here](https://github.com/fat-fellow/github-helloworld-demo/blob/main/common/domain/src/main/java/mayudin/common/domain/utils/ConvenienceFunctions.kt#L7)
 
 - I've worked with monadic wrappers like `Result` / `Either` before, and they work well, but they introduce a lot of unwrapping between layers. Letting exceptions propagate keep business logic straightforward and avoids turning the code into chains of result handling.
-- The repository translates low-level failures into domain exceptions so higher layers don’t need to know about networking or serialization details.
-- Exceptions are ultimately caught in the ViewModel and mapped to UI state. I didn't bother myself to support it in this sample, but in real products, it’s usually better to react intentionally rather than just display a generic error.
+- The repository translates low-level failures into domain exceptions so higher layers don't need to know about networking or serialization details.
+- Exceptions are ultimately caught in the ViewModel and mapped to UI state. I didn't bother myself to support it in this sample, but in real products, it's usually better to react intentionally rather than just display a generic error.
+
+## Local-first caching example with TTL (Repos feature)
+
+The repositories list is stored in a Room database and served locally first as a SSOT. For now without pagination
