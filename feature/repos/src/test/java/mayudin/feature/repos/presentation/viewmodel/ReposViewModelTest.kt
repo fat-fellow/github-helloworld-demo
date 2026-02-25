@@ -1,12 +1,14 @@
 package mayudin.feature.repos.presentation.viewmodel
 
 import app.cash.turbine.test
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -43,7 +45,7 @@ class ReposViewModelTest {
     @Test
     fun `uiState emits Success state with results when query is not blank`() = testScope.runTest {
         val query = "test"
-        coEvery { reposUseCase(query) } returns listOf("Repo1", "Repo2")
+        every { reposUseCase(query) } returns flowOf(listOf("Repo1", "Repo2"))
 
         viewModel.uiState.test {
             // Initial Idle state
@@ -67,7 +69,7 @@ class ReposViewModelTest {
     @Test
     fun `uiState emits Loading state when query is not blank`() = testScope.runTest {
         val query = "test"
-        coEvery { reposUseCase(query) } returns listOf("Repo1", "Repo2")
+        every { reposUseCase(query) } returns flowOf(listOf("Repo1", "Repo2"))
 
         viewModel.uiState.test {
             // Initial Idle state
@@ -90,7 +92,7 @@ class ReposViewModelTest {
     fun `uiState emits Error state when use case throws exception`() = testScope.runTest {
         val query = "test"
         val exception = Throwable("An error occurred")
-        coEvery { reposUseCase(query) } throws exception
+        every { reposUseCase(query) } returns flow { throw exception }
 
         viewModel.uiState.test {
             // Initial Idle state
@@ -113,7 +115,7 @@ class ReposViewModelTest {
     @Test
     fun `uiState returns to Idle state when query becomes blank`() = testScope.runTest {
         val query = "test"
-        coEvery { reposUseCase(query) } returns listOf("Repo1", "Repo2")
+        every { reposUseCase(query) } returns flowOf(listOf("Repo1", "Repo2"))
 
         viewModel.uiState.test {
             // Initial Idle state

@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import mayudin.feature.repos.domain.usecase.ReposUseCase
@@ -51,9 +52,19 @@ class ReposViewModel @Inject constructor(private val reposUseCase: ReposUseCase)
             queryFlow
                 .debounce(DEBOUNCE)
                 .distinctUntilChanged()
-                .onEach { loadRepos(it) }
-                .catch { onError(it) }
-                .collect()
+                .flatMapLatest { query ->
+                    if (query.isBlank()) {
+                        _uiState.value = UiState.Idle
+                        return@flatMapLatest emptyFlow()
+                    }
+                    _uiState.value = UiState.Loading
+                    reposUseCase(query)
+                        .onEach { repos ->
+                            _uiState.value = UiState.Success(owner = query, repos = repos)
+                        }
+                        .catch { throwable -> onError(throwable) }
+                }
+                .collect {}
         }
     }
 
@@ -65,22 +76,6 @@ class ReposViewModel @Inject constructor(private val reposUseCase: ReposUseCase)
         viewModelScope.launch {
             _viewEffects.emit(RepoEffect.NavigateToInfo(owner, repo))
         }
-    }
-
-    private suspend fun loadRepos(query: String) {
-        if (query.isBlank()) {
-            _uiState.value = UiState.Idle
-            return
-        }
-
-        _uiState.value = UiState.Loading
-
-        val result = reposUseCase(query)
-
-        _uiState.value = UiState.Success(
-            owner = query,
-            repos = result,
-        )
     }
 
     private fun CoroutineScope.launchSafely(block: suspend () -> Unit): Job = this.launch(errorHandler) {

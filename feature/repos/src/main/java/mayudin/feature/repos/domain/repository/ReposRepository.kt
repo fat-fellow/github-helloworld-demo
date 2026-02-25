@@ -1,5 +1,7 @@
 package mayudin.feature.repos.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+
 interface ReposRepository {
-    suspend fun fetchRepos(user: String): List<String>
+    fun fetchRepos(user: String): Flow<List<String>>
 }
