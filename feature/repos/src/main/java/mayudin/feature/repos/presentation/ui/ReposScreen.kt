@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -31,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -63,7 +65,7 @@ fun ReposScreen(onNavigation: (String, String) -> Unit, viewModel: ReposViewMode
         uiState = uiState,
         searchText = searchText,
         onSearchTextChanged = { text ->
-            searchText = text
+            searchText = text // it's not redundant
             viewModel.onSearchTextChanged(text.text)
         },
         onRepoClicked = viewModel::onRepoClicked,
@@ -173,8 +175,6 @@ fun SuccessLayout(
                     color = Color.Gray,
                     shape = RoundedCornerShape(8.dp),
                 ),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(repos) { repo ->
                 RepoItem(repo = repo) {
@@ -192,8 +192,9 @@ fun RepoItem(repo: String, onClick: () -> Unit) {
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onClick() },
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(12.dp)
     )
 }
 
@@ -210,25 +211,12 @@ fun SearchBar(
     onSearchTextChanged: (TextFieldValue) -> Unit,
     hint: String = "",
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-            .border(width = Dp.Hairline, color = Color.Gray, shape = RoundedCornerShape(8.dp)),
-    ) {
-        if (searchText.text.isEmpty()) {
-            Text(
-                text = hint,
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                modifier = Modifier.padding(8.dp),
-            )
-        }
-        BasicTextField(
-            value = searchText,
-            onValueChange = onSearchTextChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        )
-    }
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = onSearchTextChanged,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text(hint) },
+        singleLine = true,
+        shape = RoundedCornerShape(8.dp)
+    )
 }
