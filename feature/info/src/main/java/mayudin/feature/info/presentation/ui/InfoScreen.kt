@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import feature.info.R
+import kotlinx.collections.immutable.ImmutableList
 import mayudin.feature.info.presentation.model.InfoEffect
 import mayudin.feature.info.presentation.model.UiState
 import mayudin.feature.info.presentation.viewmodel.InfoViewModel
@@ -155,7 +156,7 @@ private fun InfoHeader(repo: String, owner: String) {
 }
 
 @Composable
-private fun InfoList(items: List<String>) {
+private fun InfoList(items: ImmutableList<String>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp),

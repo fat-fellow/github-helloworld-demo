@@ -41,6 +41,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.core.ktx").get())
                 "implementation"(libs.findLibrary("androidx.appcompat").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewmodel.ktx").get())
+                "implementation"(libs.findLibrary("kotlinx.collections.immutable").get())
             }
         }
     }

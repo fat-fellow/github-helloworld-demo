@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -45,7 +46,7 @@ class ReposViewModelTest {
     @Test
     fun `uiState emits Loading then Success on non-blank query`() = testScope.runTest {
         val query = "test"
-        every { reposUseCase(query) } returns flowOf(listOf("Repo1", "Repo2"))
+        every { reposUseCase(query) } returns flowOf(persistentListOf("Repo1", "Repo2"))
 
         viewModel.uiState.test {
             assertEquals(UiState.Idle, awaitItem())
@@ -57,7 +58,7 @@ class ReposViewModelTest {
 
             val success = awaitItem() as UiState.Success
             assertEquals(query, success.owner)
-            assertEquals(listOf("Repo1", "Repo2"), success.repos)
+            assertEquals(persistentListOf("Repo1", "Repo2"), success.repos)
         }
     }
 
@@ -65,8 +66,8 @@ class ReposViewModelTest {
     fun `uiState emits Loading then two Success emissions on background refresh`() = testScope.runTest {
         val query = "test"
         every { reposUseCase(query) } returns flowOf(
-            listOf("OldRepo"),
-            listOf("OldRepo", "NewRepo"),
+            persistentListOf("OldRepo"),
+            persistentListOf("OldRepo", "NewRepo"),
         )
 
         viewModel.uiState.test {
@@ -76,8 +77,8 @@ class ReposViewModelTest {
             advanceUntilIdle()
 
             assertTrue(awaitItem() is UiState.Loading)
-            assertEquals(listOf("OldRepo"), (awaitItem() as UiState.Success).repos)
-            assertEquals(listOf("OldRepo", "NewRepo"), (awaitItem() as UiState.Success).repos)
+            assertEquals(persistentListOf("OldRepo"), (awaitItem() as UiState.Success).repos)
+            assertEquals(persistentListOf("OldRepo", "NewRepo"), (awaitItem() as UiState.Success).repos)
         }
     }
 
@@ -102,7 +103,7 @@ class ReposViewModelTest {
     @Test
     fun `uiState returns to Idle when query becomes blank`() = testScope.runTest {
         val query = "test"
-        every { reposUseCase(query) } returns flowOf(listOf("Repo1"))
+        every { reposUseCase(query) } returns flowOf(persistentListOf("Repo1"))
 
         viewModel.uiState.test {
             assertEquals(UiState.Idle, awaitItem())

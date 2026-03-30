@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import feature.repos.R
+import kotlinx.collections.immutable.ImmutableList
 import mayudin.feature.repos.presentation.model.RepoEffect
 import mayudin.feature.repos.presentation.model.UiState
 import mayudin.feature.repos.presentation.viewmodel.ReposViewModel
@@ -147,7 +148,7 @@ fun IdleLayout() {
 
 @Composable
 fun SuccessLayout(
-    repos: List<String>,
+    repos: ImmutableList<String>,
     owner: String,
     onRepoClicked: (String, String) -> Unit,
 ) {

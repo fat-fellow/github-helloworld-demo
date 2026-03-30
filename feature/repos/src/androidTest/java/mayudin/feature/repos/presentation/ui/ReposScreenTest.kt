@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.collections.immutable.persistentListOf
 import mayudin.feature.repos.presentation.model.UiState
 import org.junit.Rule
 import org.junit.Test
@@ -57,7 +58,7 @@ class ReposScreenTest {
 
     @Test
     fun testSuccessLayoutDisplaysRepos() {
-        val repos = listOf("Repo1", "Repo2", "Repo3")
+        val repos = persistentListOf("Repo1", "Repo2", "Repo3")
 
         composeTestRule.setContent {
             SuccessLayout(
@@ -76,7 +77,7 @@ class ReposScreenTest {
     fun testSuccessLayoutDisplaysEmptyMessage() {
         composeTestRule.setContent {
             SuccessLayout(
-                repos = emptyList(),
+                repos = persistentListOf(),
                 owner = "testOwner",
                 onRepoClicked = { _, _ -> },
             )
@@ -112,7 +113,7 @@ class ReposScreenTest {
     fun testReposScreenDisplaysSuccessState() {
         composeTestRule.setContent {
             ScreenLayout(
-                uiState = UiState.Success(owner = "testOwner", repos = listOf("Repo1", "Repo2")),
+                uiState = UiState.Success(owner = "testOwner", repos = persistentListOf("Repo1", "Repo2")),
                 searchText = TextFieldValue("testOwner"),
                 onSearchTextChanged = {},
                 onRepoClicked = { _, _ -> },
