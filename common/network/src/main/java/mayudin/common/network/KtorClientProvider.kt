@@ -8,13 +8,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.min
 import kotlin.random.Random
+import kotlinx.serialization.json.Json
 
 @Singleton
+@Suppress("MagicNumber")
 class KtorClientProviderImpl @Inject constructor() : KtorClientProvider {
     override val client = HttpClient {
         install(ContentNegotiation) {
@@ -25,7 +26,7 @@ class KtorClientProviderImpl @Inject constructor() : KtorClientProvider {
 
             retryOnServerErrors()
 
-            //jittered exponential backoff with a cap of 10 seconds
+            // jittered exponential backoff with a cap of 10 seconds
             delayMillis { retry ->
                 val cap = 10_000L // 10 seconds
                 val base = 1000L * (1 shl retry)
